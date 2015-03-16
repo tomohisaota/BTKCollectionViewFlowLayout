@@ -1,0 +1,26 @@
+//
+//  BTKCollectionViewFlowLayout.h
+//  BTKCollectionViewFlowLayout
+//
+//  Created by Tomohisa Ota on 2015/03/16.
+//  Copyright (c) 2015年 Tomohisa Ota. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "BTKCollectionViewDelegateFlowLayout.h"
+
+@interface BTKCollectionViewFlowLayout : UICollectionViewFlowLayout
+
+/** Sticky Header Views */
+@property(nonatomic,assign,readwrite) BOOL shouldStickHeaderViews;
+
+/** Sticky Footer Views */
+@property(nonatomic,assign,readwrite) BOOL shouldStickFooterViews;
+
+/** Default Horizontal Alignment */
+@property(nonatomic,assign,readwrite) UIControlContentHorizontalAlignment horizontalAlignment;
+
+/** Default Vertical Alignment */
+@property(nonatomic,assign,readwrite) UIControlContentVerticalAlignment verticalAlignment;
+
+@end

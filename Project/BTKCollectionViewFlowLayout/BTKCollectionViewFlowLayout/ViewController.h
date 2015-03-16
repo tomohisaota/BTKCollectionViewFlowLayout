@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BTKCollectionViewDelegateFlowLayout.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<BTKCollectionViewDelegateFlowLayout,UICollectionViewDataSource>
 
 
 @end
