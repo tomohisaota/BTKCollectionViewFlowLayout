@@ -146,21 +146,20 @@
         contentRect = UIEdgeInsetsInsetRect(contentRect, UIEdgeInsetsMake(-insets.top, -insets.left, -insets.bottom, -insets.right));
         
         CGRect f = attr.frame;
-        
-        CGFloat width = CGRectGetWidth(attr.frame);
-        CGFloat height = CGRectGetHeight(attr.frame);
+        CGFloat w = CGRectGetWidth(f);
+        CGFloat h = CGRectGetHeight(f);
         if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
             if(self.shouldStickHeaderViews){
                 if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
                     CGFloat topOfView = contentOffset.y + self.collectionView.contentInset.top;
-                    CGFloat relativeToFirst = CGRectGetMinY(contentRect) - height;
-                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) - height  + 1;
+                    CGFloat relativeToFirst = CGRectGetMinY(contentRect) - h;
+                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) - h  + 1;
                     f.origin.y = MIN(MAX(topOfView,relativeToFirst),relativeToLast);
                 }
                 else{
                     CGFloat leftOfView = contentOffset.x + self.collectionView.contentInset.left;
-                    CGFloat relativeToFirst = CGRectGetMinX(contentRect) - width;
-                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) - width + 1;
+                    CGFloat relativeToFirst = CGRectGetMinX(contentRect) - w;
+                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) - w + 1;
                     f.origin.x = MIN(MAX(leftOfView,relativeToFirst),relativeToLast);
                 }
             }
@@ -168,13 +167,13 @@
         else{
             if(self.shouldStickFooterViews){
                 if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-                    CGFloat bottomOfView = contentOffset.y + self.collectionView.frame.size.height - height - self.collectionView.contentInset.bottom;
+                    CGFloat bottomOfView = contentOffset.y + self.collectionView.frame.size.height - h - self.collectionView.contentInset.bottom;
                     CGFloat relativeToFirst = CGRectGetMinY(contentRect);
                     CGFloat relativeToLast = CGRectGetMaxY(contentRect) + 1;
                     f.origin.y = MIN(MAX(bottomOfView,relativeToFirst),relativeToLast);
                 }
                 else{
-                    CGFloat rightOfView = contentOffset.x + self.collectionView.frame.size.width - width - self.collectionView.contentInset.right;
+                    CGFloat rightOfView = contentOffset.x + self.collectionView.frame.size.width - w - self.collectionView.contentInset.right;
                     CGFloat relativeToFirst = CGRectGetMinX(contentRect);
                     CGFloat relativeToLast = CGRectGetMaxX(contentRect) + 1;
                     f.origin.x = MIN(MAX(rightOfView,relativeToFirst),relativeToLast);
@@ -205,6 +204,7 @@
         [rowCollections[xCenter] addObject:attr];
     }
     
+    UIEdgeInsets contentInset = self.collectionView.contentInset;
     for(NSArray *attrs in rowCollections.allValues){
         UICollectionViewLayoutAttributes *firstAttr = attrs.firstObject;
         NSInteger s = firstAttr.indexPath.section;
@@ -221,7 +221,7 @@
         }
         
         CGFloat totalHeight = totalItemHeight + itemSpace * (attrs.count -1);
-        CGFloat totalMargin = CGRectGetHeight(self.collectionView.bounds) - totalHeight;
+        CGFloat totalMargin = CGRectGetHeight(self.collectionView.bounds) - totalHeight - contentInset.top - contentInset.bottom;
         
         UIControlContentVerticalAlignment vAlign = [self verticalAlignmentForSection:s];
         UIControlContentHorizontalAlignment hAlign = [self horizontalAlignmentForSection:s];
@@ -271,6 +271,7 @@
         [rowCollections[yCenter] addObject:attr];
     }
     
+    UIEdgeInsets contentInset = self.collectionView.contentInset;
     for(NSArray *attrs in rowCollections.allValues){
         UICollectionViewLayoutAttributes *firstAttr = attrs.firstObject;
         NSInteger s = firstAttr.indexPath.section;
@@ -287,7 +288,7 @@
         }
         
         CGFloat totalWidth = totalItemWidth + itemSpace * (attrs.count -1);
-        CGFloat totalMargin = CGRectGetWidth(self.collectionView.bounds) - totalWidth;
+        CGFloat totalMargin = CGRectGetWidth(self.collectionView.bounds) - totalWidth - contentInset.left - contentInset.right;
         
         UIControlContentVerticalAlignment vAlign = [self verticalAlignmentForSection:s];
         UIControlContentHorizontalAlignment hAlign = [self horizontalAlignmentForSection:s];
