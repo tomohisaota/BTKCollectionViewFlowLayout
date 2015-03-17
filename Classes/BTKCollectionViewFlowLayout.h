@@ -3,13 +3,16 @@
 //  BTKCollectionViewFlowLayout
 //
 //  Created by Tomohisa Ota on 2015/03/16.
-//  Copyright (c) 2015年 Tomohisa Ota. All rights reserved.
+//  Copyright (c) 2015 Tomohisa Ota. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "BTKCollectionViewDelegateFlowLayout.h"
 
 @interface BTKCollectionViewFlowLayout : UICollectionViewFlowLayout
+
+/** Sticky Header Views */
+@property(nonatomic,assign,readwrite) BOOL shouldAlignToPointGrid;
 
 /** Sticky Header Views */
 @property(nonatomic,assign,readwrite) BOOL shouldStickHeaderViews;

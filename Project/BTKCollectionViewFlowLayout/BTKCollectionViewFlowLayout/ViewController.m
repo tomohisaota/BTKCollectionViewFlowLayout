@@ -3,7 +3,7 @@
 //  BTKCollectionViewFlowLayout
 //
 //  Created by Tomohisa Ota on 2015/03/16.
-//  Copyright (c) 2015年 Tomohisa Ota. All rights reserved.
+//  Copyright (c) 2015 Tomohisa Ota. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -72,6 +72,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     }
     
     _collectionViewLayout = BTKCollectionViewFlowLayout.new;
+    //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
                                        collectionViewLayout:self.collectionViewLayout];
     _collectionView.contentInset = UIEdgeInsetsMake(50, 50, 50, 50);

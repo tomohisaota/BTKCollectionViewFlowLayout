@@ -3,7 +3,7 @@
 //  BTKCollectionViewFlowLayout
 //
 //  Created by Tomohisa Ota on 2015/03/16.
-//  Copyright (c) 2015年 Tomohisa Ota. All rights reserved.
+//  Copyright (c) 2015 Tomohisa Ota. All rights reserved.
 //
 
 #import "BTKCollectionViewFlowLayout.h"
@@ -30,6 +30,9 @@
     }
     if(self.shouldStickHeaderViews || self.shouldStickFooterViews){
         [self updateStickyViews:attrs];
+    }
+    if(self.shouldAlignToPointGrid){
+        [self alignPointGridAlignmentOfLayoutAttributes:attrs];
     }
     return attrs.copy;
 }
@@ -63,7 +66,7 @@
     return shouldInvalidate || invalidate;
 }
 
-#pragma mark Alignment
+#pragma mark Sticky Headers
 
 - (void) addMissingHeaderAndFooterViews: (NSMutableArray*) attrs
 {
@@ -182,6 +185,8 @@
         attr.frame = f;
     }
 }
+
+#pragma mark Alignment
 
 - (void) updateVerticalAlighnmentOfLayoutAttributes : (NSMutableArray*) attrs
 {
@@ -314,6 +319,22 @@
         }
     };
 }
+
+#pragma mark Point align
+
+- (void) alignPointGridAlignmentOfLayoutAttributes : (NSMutableArray*) attrs
+{
+    for (UICollectionViewLayoutAttributes *attr in attrs) {
+        if (attr.representedElementCategory != UICollectionElementCategoryCell) {
+            continue;
+        }
+        // Align to point grid
+        CGRect f = attr.frame;
+        f = CGRectMake(floorf(f.origin.x), floorf(f.origin.y), f.size.width, f.size.height);
+        attr.frame = f;
+    }
+}
+
 
 #pragma mark Access Delegate
 
