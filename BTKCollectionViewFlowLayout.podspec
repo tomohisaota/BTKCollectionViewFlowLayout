@@ -1,21 +1,19 @@
 Pod::Spec.new do |s|
-  s.name             = "BTKInjector"
-  s.version          = "2.1.1"
-  s.summary          = "DI Framework for Objective-C/Swift"
+  s.name             = "BTKCollectionViewFlowLayout"
+  s.version          = "1.0.0"
+  s.summary          = "CollectionViewFlowLayout which supports alignment and sticky view"
   s.description      = <<-DESC
-                       Simple DI(Dependency Injection) Framework designed for Objective C/Swift
+                       CollectionViewFlowLayout which supports alignment and sticky view
                        DESC
-  s.homepage         = "https://github.com/tomohisaota/BTKInjector"
+  s.homepage         = "https://github.com/tomohisaota/BTKCollectionViewFlowLayout"
   s.license          = 'Apache License, Version 2.0'
   s.author           = { "Tomohisa Ota" => "tomohisa.ota+github@gmail.com" }
-  s.source           = { :git => "https://github.com/tomohisaota/BTKInjector.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/tomohisaota/BTKCollectionViewFlowLayout.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/toowitter'
 
   s.ios.deployment_target = '6.0'
-  s.osx.deployment_target = '10.8'
   s.requires_arc = true
 
   s.source_files = 'Classes/**/*.{h,m}'
-  s.private_header_files = 'Classes/Impl/*.h'
 
 end

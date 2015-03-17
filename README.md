@@ -1,23 +1,23 @@
-# BTKInjector
+# BTKCollectionViewFlowLayout
 
-[![Build Status](https://travis-ci.org/tomohisaota/BTKInjector.svg?branch=master)](https://travis-ci.org/tomohisaota/BTKInjector)
+[![Build Status](https://travis-ci.org/tomohisaota/BTKCollectionViewFlowLayout.svg?branch=master)](https://travis-ci.org/tomohisaota/BTKCollectionViewFlowLayout)
 
-BTKInjector is Dependency Injection Framework for Objective C/Swift. It is designed to do one thing well. **Injecting singleton instance with dependencies.**
+CollectionViewFlowLayout which supports alignment and sticky view
 
 ## How to install
-BTKInjector is available on [CocoaPods](http://cocoapods.org)
+BTKCollectionViewFlowLayout is available on [CocoaPods](http://cocoapods.org)
 
 ```
-pod 'BTKInjector', '~> 2.1.0'
+pod 'BTKCollectionViewFlowLayout'
 ```
 or you can use latest code from github
 
 ```
-pod 'BTKInjector', :git => 'https://github.com/tomohisaota/BTKInjector.git', :branch => "develop"
+pod 'BTKCollectionViewFlowLayout', :git => 'https://github.com/tomohisaota/BTKCollectionViewFlowLayout.git', :branch => "develop"
 ```
 
 ## Documentation
-See [wiki](https://github.com/tomohisaota/BTKInjector/wiki).
+See [wiki](https://github.com/tomohisaota/BTKCollectionViewFlowLayout/wiki).
 
 ## License
-BTKInjector is created and maintained by Tomohisa Ota under the Apache 2.0 license.
+BTKCollectionViewFlowLayout is created and maintained by Tomohisa Ota under the Apache 2.0 license.
