@@ -1,17 +1,20 @@
 # BTKCollectionViewFlowLayout
 
-CollectionViewFlowLayout which supports alignment and sticky view
+CollectionViewFlowLayout with additional supplemental views and alignment/sticky option.
+
+## Functionality
+* Horizontal Item Alignment
+* Vertical Item Alignment
+* Body supplemental View
+* Background supplemental View
+* Sticky Header View
+* Sticky Footer View
 
 ## How to install
 BTKCollectionViewFlowLayout is available on [CocoaPods](http://cocoapods.org)
 
 ```
 pod 'BTKCollectionViewFlowLayout'
-```
-or you can use latest code from github
-
-```
-pod 'BTKCollectionViewFlowLayout', :git => 'https://github.com/tomohisaota/BTKCollectionViewFlowLayout.git', :branch => "develop"
 ```
 
 ## Documentation
