@@ -3,7 +3,8 @@ Pod::Spec.new do |s|
   s.version          = "1.0.0"
   s.summary          = "CollectionViewFlowLayout with additional supplemental views and alignment/sticky option."
   s.description      = <<-DESC
-                       CollectionViewFlowLayout with additional supplemental views and alignment/sticky option.
+                       CollectionViewFlowLayout with body and background supplemental views.
+                       Also have sticky header/footer option, and alignment option for items.
                        DESC
   s.homepage         = "https://github.com/tomohisaota/BTKCollectionViewFlowLayout"
   s.license          = 'Apache License, Version 2.0'
