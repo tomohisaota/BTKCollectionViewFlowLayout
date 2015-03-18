@@ -303,21 +303,24 @@ typedef enum BTKViewControllerCellType : NSUInteger {
         UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                          withReuseIdentifier:@"Footer"
                                                                                 forIndexPath:indexPath];
-        v.backgroundColor = [UIColor yellowColor];
+        v.layer.borderColor = [UIColor.yellowColor colorWithAlphaComponent:0.8].CGColor;
+        v.layer.borderWidth = 5;
         return v;
     }
     else if([kind isEqualToString:UICollectionElementKindSectionHeader]){
         UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                          withReuseIdentifier:@"Header"
                                                                                 forIndexPath:indexPath];
-        v.backgroundColor = [UIColor blueColor];
+        v.layer.borderColor = [UIColor.blueColor colorWithAlphaComponent:0.8].CGColor;
+        v.layer.borderWidth = 5;
         return v;
     }
     else if([kind isEqualToString:self.bodyViewKind]){
         UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                          withReuseIdentifier:@"Body"
                                                                                 forIndexPath:indexPath];
-        v.backgroundColor = [UIColor greenColor];
+        v.layer.borderColor = [UIColor.greenColor colorWithAlphaComponent:0.8].CGColor;
+        v.layer.borderWidth = 5;
         return v;
     }
     return nil;

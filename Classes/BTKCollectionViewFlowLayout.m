@@ -16,6 +16,11 @@
     if(self){
         _horizontalAlignment = UIControlContentHorizontalAlignmentFill;
         _verticalAlignment = UIControlContentVerticalAlignmentFill;
+        
+        _zIndexForBody = 1;
+        _zIndexForItem = 2;
+        _zIndexForHeader = 3;
+        _zIndexForFooter = 3;
     }
     return self;
 }
@@ -37,6 +42,7 @@
     if(self.collectionElementKindSectionBody){
         [self addSectionBodyView:attrs];
     }
+    [self updateZIndex:attrs];
     return attrs.copy;
 }
 
@@ -67,6 +73,26 @@
         [self invalidateLayout];
     }
     return shouldInvalidate || invalidate;
+}
+
+#pragma mark zIndex
+
+- (void) updateZIndex: (NSMutableArray*) attrs
+{
+    for (UICollectionViewLayoutAttributes *attr in attrs) {
+        if (attr.representedElementCategory == UICollectionElementCategoryCell) {
+            attr.zIndex = self.zIndexForItem;
+        }
+        else if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
+            attr.zIndex = self.zIndexForHeader;
+        }
+        else if (attr.representedElementKind == UICollectionElementKindSectionFooter) {
+            attr.zIndex = self.zIndexForFooter;
+        }
+        else if (attr.representedElementKind == self.collectionElementKindSectionBody) {
+            attr.zIndex = self.zIndexForBody;
+        }
+    }
 }
 
 #pragma mark Sticky Headers
@@ -183,7 +209,6 @@
                 }
             }
         }
-        attr.zIndex = 1024;
         attr.frame = f;
     }
 }
@@ -408,7 +433,6 @@
         attr = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:self.collectionElementKindSectionBody
                                                                               withIndexPath:indexPath];
         attr.frame = frame;
-        attr.zIndex = -1;
         return attr;
     }
     return [super layoutAttributesForSupplementaryViewOfKind:elementKind

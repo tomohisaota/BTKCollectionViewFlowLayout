@@ -29,4 +29,16 @@
 /** Default Vertical Alignment , use delegate for per-section control*/
 @property(nonatomic,assign,readwrite) UIControlContentVerticalAlignment verticalAlignment;
 
+/** zIndex for Item Cells */
+@property(nonatomic,assign,readwrite) NSInteger zIndexForItem;
+
+/** zIndex for Header Views */
+@property(nonatomic,assign,readwrite) NSInteger zIndexForHeader;
+
+/** zIndex for Footer Views */
+@property(nonatomic,assign,readwrite) NSInteger zIndexForFooter;
+
+/** zIndex for Body Views */
+@property(nonatomic,assign,readwrite) NSInteger zIndexForBody;
+
 @end
