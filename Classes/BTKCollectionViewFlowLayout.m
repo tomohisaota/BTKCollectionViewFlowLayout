@@ -15,14 +15,9 @@
     self = super.init;
     if(self){
         _horizontalAlignment = UIControlContentHorizontalAlignmentFill;
-        _verticalAlignment = UIControlContentVerticalAlignmentCenter;
+        _verticalAlignment = UIControlContentVerticalAlignmentFill;
     }
     return self;
-}
-
-- (void)prepareLayout
-{
-    [super prepareLayout];
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
@@ -40,8 +35,7 @@
         [self alignPointGridAlignmentOfLayoutAttributes:attrs];
     }
     if(self.collectionElementKindSectionBody){
-        [self addSectionBodyView:attrs
-                          inRect:rect];
+        [self addSectionBodyView:attrs];
     }
     return attrs.copy;
 }
@@ -347,7 +341,7 @@
 
 #pragma mark Section Background
 
-- (void) addSectionBodyView : (NSMutableArray*) attrs inRect:(CGRect)rect
+- (void) addSectionBodyView : (NSMutableArray*) attrs
 {
     NSMutableIndexSet *sectionsElementExists = [NSMutableIndexSet indexSet];
     

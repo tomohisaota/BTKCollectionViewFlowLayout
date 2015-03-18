@@ -23,10 +23,10 @@
 /** Sticky Footer Views */
 @property(nonatomic,assign,readwrite) BOOL shouldStickFooterViews;
 
-/** Default Horizontal Alignment , use delegate for per section control*/
+/** Default Horizontal Alignment , use delegate for per-section control*/
 @property(nonatomic,assign,readwrite) UIControlContentHorizontalAlignment horizontalAlignment;
 
-/** Default Vertical Alignment , use delegate for per section control*/
+/** Default Vertical Alignment , use delegate for per-section control*/
 @property(nonatomic,assign,readwrite) UIControlContentVerticalAlignment verticalAlignment;
 
 @end
