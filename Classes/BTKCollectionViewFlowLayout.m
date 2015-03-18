@@ -28,6 +28,7 @@
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSMutableArray *attrs = [super layoutAttributesForElementsInRect:rect].mutableCopy;
+    [self removeIncorrectAttributes:attrs];
     if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
         [self updateHorizontalAlighnmentOfLayoutAttributes:attrs];
     }
@@ -75,6 +76,31 @@
     }
     return shouldInvalidate || invalidate;
 }
+
+#pragma mark Apple Bug workaround
+
+- (void) removeIncorrectAttributes: (NSMutableArray*) attrs
+{
+    // Apple bug workaround
+    // http://stackoverflow.com/questions/12927027/uicollectionview-flowlayout-not-wrapping-cells-correctly-ios
+    for (UICollectionViewLayoutAttributes *attr in attrs) {
+        if (attr.representedElementCategory != UICollectionElementCategoryCell) {
+            continue;
+        }
+        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+            if (CGRectGetMaxX(attr.frame) <= self.collectionViewContentSize.width) {
+                continue;
+            }
+        }
+        else{
+            if (CGRectGetMaxY(attr.frame) <= self.collectionViewContentSize.height) {
+                continue;
+            }
+        }
+        [attrs removeObject:attr];
+    }
+}
+
 
 #pragma mark zIndex
 
