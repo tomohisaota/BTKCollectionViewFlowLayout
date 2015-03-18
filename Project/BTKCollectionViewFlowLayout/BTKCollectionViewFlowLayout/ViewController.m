@@ -32,6 +32,8 @@ typedef enum BTKViewControllerCellType : NSUInteger {
 @property(nonatomic,strong,readonly) UISwitch *stickyHeaderSwicth;
 @property(nonatomic,strong,readonly) UISwitch *stickyFooterSwicth;
 
+@property(nonatomic,strong,readonly) NSString *bodyViewKind;
+
 @end
 
 @implementation ViewController
@@ -72,6 +74,8 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     }
     
     _collectionViewLayout = BTKCollectionViewFlowLayout.new;
+    _collectionViewLayout.collectionElementKindSectionBody = self.bodyViewKind;
+    
     //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
                                        collectionViewLayout:self.collectionViewLayout];
@@ -91,6 +95,9 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     [self.collectionView registerClass:[UICollectionReusableView class]
             forSupplementaryViewOfKind:UICollectionElementKindSectionFooter
                    withReuseIdentifier:@"Footer"];
+    [self.collectionView registerClass:[UICollectionReusableView class]
+            forSupplementaryViewOfKind:self.bodyViewKind
+                   withReuseIdentifier:@"Body"];
 
     [self.view addSubview:self.collectionView];
     [self.view addSubview:_controlView];
@@ -99,6 +106,11 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     [_controlView addSubview:_vAlignControl];
     [_controlView addSubview:_stickyHeaderSwicth];
     [_controlView addSubview:_stickyFooterSwicth];
+}
+
+- (NSString *)bodyViewKind
+{
+    return @"BodyKind";
 }
      
  - (void)valueChanged:(id)sender
@@ -294,13 +306,21 @@ typedef enum BTKViewControllerCellType : NSUInteger {
         v.backgroundColor = [UIColor yellowColor];
         return v;
     }
-    else{
+    else if([kind isEqualToString:UICollectionElementKindSectionHeader]){
         UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                          withReuseIdentifier:@"Header"
                                                                                 forIndexPath:indexPath];
         v.backgroundColor = [UIColor blueColor];
         return v;
     }
+    else if([kind isEqualToString:self.bodyViewKind]){
+        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                         withReuseIdentifier:@"Body"
+                                                                                forIndexPath:indexPath];
+        v.backgroundColor = [UIColor greenColor];
+        return v;
+    }
+    return nil;
 }
 
 - (UIEdgeInsets) collectionView:(UICollectionView *)collectionView

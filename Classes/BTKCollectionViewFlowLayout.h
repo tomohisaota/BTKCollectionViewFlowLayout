@@ -11,6 +11,8 @@
 
 @interface BTKCollectionViewFlowLayout : UICollectionViewFlowLayout
 
+@property(nonatomic,copy,readwrite) NSString *collectionElementKindSectionBody;
+
 /** Sticky Header Views */
 @property(nonatomic,assign,readwrite) BOOL shouldAlignToPointGrid;
 
