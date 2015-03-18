@@ -170,7 +170,7 @@
             [attrs addObject:attr];
         }];
     }
-
+    
     // Add missing footers only if sticky footer is enabled
     if(self.shouldStickFooterViews){
         [footerMissingSections enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -189,7 +189,7 @@
     CGPoint contentOffset = self.collectionView.contentOffset;
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         if((attr.representedElementKind != UICollectionElementKindSectionHeader) &&
-            attr.representedElementKind != UICollectionElementKindSectionFooter){
+           attr.representedElementKind != UICollectionElementKindSectionFooter){
             continue;
         }
         NSInteger s = attr.indexPath.section;
@@ -439,28 +439,50 @@
     CGSize size = self.collectionView.frame.size;
     
     UICollectionViewLayoutAttributes *startAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                                                    atIndexPath:indexPath];
+                                                                                       atIndexPath:indexPath];
     UICollectionViewLayoutAttributes *endAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
-                                                                                        atIndexPath:indexPath];
-
+                                                                                     atIndexPath:indexPath];
+    
     if(CGSizeEqualToSize(endAttr.frame.size, CGSizeZero)){
-        // Footer is not available
+        // Footer does not exists.
+        CGSize contentSize;
         if(self.collectionView.numberOfSections - 1 != indexPath.section){
             // Use next header as reference
             NSIndexPath *nextIndex = [NSIndexPath indexPathForItem:0 inSection:indexPath.section + 1];
             endAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                                                            atIndexPath:nextIndex];
+                                                           atIndexPath:nextIndex];
+            contentSize.width = CGRectGetMinX(endAttr.frame) - CGRectGetMaxX(startAttr.frame);
+            contentSize.height = CGRectGetMinY(endAttr.frame) - CGRectGetMaxY(startAttr.frame);
         }
         else{
-            // Create dummy attribute from contentSize
-            CGSize contentSize = self.collectionView.contentSize;
-            endAttr = UICollectionViewLayoutAttributes.new;
-            if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-                endAttr.frame = CGRectMake(0, contentSize.height, 0, 0);
+            // Check all items to calculate content area
+            NSInteger s = indexPath.section;
+            NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
+            UIEdgeInsets insets = [self sectionInsetForSection:s];
+            
+            CGRect contentRect = CGRectZero;
+            for(NSInteger i = 0 ; i < numOfItems ; i++){
+                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
+                                                             inSection:s];
+                UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
+                if(i==0){
+                    contentRect = attr.frame;
+                }
+                else{
+                    contentRect = CGRectUnion(contentRect, attr.frame);
+                }
             }
-            else{
-                endAttr.frame = CGRectMake(contentSize.width, 0, 0, 0);
-            }
+            contentSize = contentRect.size;
+            contentSize.width += insets.left + insets.right;
+            contentSize.height += insets.top + insets.bottom;
+        }
+        // Create dummy attribute from contentSize
+        endAttr = UICollectionViewLayoutAttributes.new;
+        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+            endAttr.frame = CGRectMake(0, CGRectGetMaxY(startAttr.frame) + contentSize.height, 0, 0);
+        }
+        else{
+            endAttr.frame = CGRectMake(CGRectGetMaxX(startAttr.frame) + contentSize.width, 0, 0, 0);
         }
     }
     
