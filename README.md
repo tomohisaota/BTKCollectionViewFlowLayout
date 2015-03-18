@@ -1,7 +1,5 @@
 # BTKCollectionViewFlowLayout
 
-[![Build Status](https://travis-ci.org/tomohisaota/BTKCollectionViewFlowLayout.svg?branch=master)](https://travis-ci.org/tomohisaota/BTKCollectionViewFlowLayout)
-
 CollectionViewFlowLayout which supports alignment and sticky view
 
 ## How to install
