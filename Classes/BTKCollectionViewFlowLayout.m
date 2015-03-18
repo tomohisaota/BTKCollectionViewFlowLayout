@@ -13,17 +13,27 @@
 - (instancetype)init
 {
     self = super.init;
-    if(self){
-        _horizontalAlignment = UIControlContentHorizontalAlignmentFill;
-        _verticalAlignment = UIControlContentVerticalAlignmentFill;
-        
-        _zIndexForBody = 1;
-        _zIndexForItem = 2;
-        _zIndexForHeader = 3;
-        _zIndexForFooter = 3;
-        _zIndexForBackground = 0;
-    }
+    [self commonInit];
     return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    [self commonInit];
+    return self;
+}
+
+- (void) commonInit
+{
+    _horizontalAlignment = UIControlContentHorizontalAlignmentFill;
+    _verticalAlignment = UIControlContentVerticalAlignmentFill;
+    
+    _zIndexForBody = 1;
+    _zIndexForItem = 2;
+    _zIndexForHeader = 3;
+    _zIndexForFooter = 3;
+    _zIndexForBackground = 0;
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
