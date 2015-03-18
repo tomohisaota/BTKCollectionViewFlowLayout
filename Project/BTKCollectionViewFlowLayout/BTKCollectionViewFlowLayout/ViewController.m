@@ -33,6 +33,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
 @property(nonatomic,strong,readonly) UISwitch *stickyFooterSwicth;
 
 @property(nonatomic,strong,readonly) NSString *bodyViewKind;
+@property(nonatomic,strong,readonly) NSString *backgroundViewKind;
 
 @end
 
@@ -75,6 +76,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     
     _collectionViewLayout = BTKCollectionViewFlowLayout.new;
     _collectionViewLayout.collectionElementKindSectionBody = self.bodyViewKind;
+    _collectionViewLayout.collectionElementKindSectionBackground = self.backgroundViewKind;
     
     //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
@@ -98,6 +100,9 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     [self.collectionView registerClass:[UICollectionReusableView class]
             forSupplementaryViewOfKind:self.bodyViewKind
                    withReuseIdentifier:@"Body"];
+    [self.collectionView registerClass:[UICollectionReusableView class]
+            forSupplementaryViewOfKind:self.backgroundViewKind
+                   withReuseIdentifier:@"Background"];
 
     [self.view addSubview:self.collectionView];
     [self.view addSubview:_controlView];
@@ -111,6 +116,11 @@ typedef enum BTKViewControllerCellType : NSUInteger {
 - (NSString *)bodyViewKind
 {
     return @"BodyKind";
+}
+
+- (NSString *)backgroundViewKind
+{
+    return @"BackgroundKind";
 }
      
  - (void)valueChanged:(id)sender
@@ -323,6 +333,14 @@ typedef enum BTKViewControllerCellType : NSUInteger {
         v.layer.borderWidth = 5;
         return v;
     }
+    else if([kind isEqualToString:self.backgroundViewKind]){
+        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                         withReuseIdentifier:@"Background"
+                                                                                forIndexPath:indexPath];
+        v.layer.backgroundColor = [UIColor.whiteColor colorWithAlphaComponent:0.8].CGColor;
+        return v;
+    }
+    // should not come here...
     return nil;
 }
 

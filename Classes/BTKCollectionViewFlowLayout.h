@@ -14,6 +14,9 @@
 /** Element Kind for Body Supplimental View*/
 @property(nonatomic,copy,readwrite) NSString *collectionElementKindSectionBody;
 
+/** Element Kind for Background Supplimental View*/
+@property(nonatomic,copy,readwrite) NSString *collectionElementKindSectionBackground;
+
 /** Align items to point grid. Useful for non retina device */
 @property(nonatomic,assign,readwrite) BOOL shouldAlignToPointGrid;
 
@@ -40,5 +43,8 @@
 
 /** zIndex for Body Views */
 @property(nonatomic,assign,readwrite) NSInteger zIndexForBody;
+
+/** zIndex for Background Views */
+@property(nonatomic,assign,readwrite) NSInteger zIndexForBackground;
 
 @end
