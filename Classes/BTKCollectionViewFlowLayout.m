@@ -162,13 +162,13 @@
                 if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
                     CGFloat topOfView = contentOffset.y + self.collectionView.contentInset.top;
                     CGFloat relativeToFirst = CGRectGetMinY(contentRect) - h;
-                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) - h  + 1;
+                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) - h;
                     f.origin.y = MIN(MAX(topOfView,relativeToFirst),relativeToLast);
                 }
                 else{
                     CGFloat leftOfView = contentOffset.x + self.collectionView.contentInset.left;
                     CGFloat relativeToFirst = CGRectGetMinX(contentRect) - w;
-                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) - w + 1;
+                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) - w;
                     f.origin.x = MIN(MAX(leftOfView,relativeToFirst),relativeToLast);
                 }
             }
@@ -178,13 +178,13 @@
                 if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
                     CGFloat bottomOfView = contentOffset.y + self.collectionView.frame.size.height - h - self.collectionView.contentInset.bottom;
                     CGFloat relativeToFirst = CGRectGetMinY(contentRect);
-                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) + 1;
+                    CGFloat relativeToLast = CGRectGetMaxY(contentRect);
                     f.origin.y = MIN(MAX(bottomOfView,relativeToFirst),relativeToLast);
                 }
                 else{
                     CGFloat rightOfView = contentOffset.x + self.collectionView.frame.size.width - w - self.collectionView.contentInset.right;
                     CGFloat relativeToFirst = CGRectGetMinX(contentRect);
-                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) + 1;
+                    CGFloat relativeToLast = CGRectGetMaxX(contentRect);
                     f.origin.x = MIN(MAX(rightOfView,relativeToFirst),relativeToLast);
                 }
             }
@@ -402,12 +402,12 @@
         if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
             CGFloat w = size.width - contentInset.left - contentInset.right;
             frame.origin = CGPointMake(CGRectGetMinX(startAttr.frame), CGRectGetMaxY(startAttr.frame));
-            frame.size = CGSizeMake(w, CGRectGetMinY(endAttr.frame) - CGRectGetMaxY(startAttr.frame)+1);
+            frame.size = CGSizeMake(w, CGRectGetMinY(endAttr.frame) - CGRectGetMaxY(startAttr.frame));
         }
         else{
             CGFloat h = size.height - contentInset.top - contentInset.bottom;
             frame.origin = CGPointMake(CGRectGetMaxX(startAttr.frame), CGRectGetMinY(startAttr.frame));
-            frame.size = CGSizeMake(CGRectGetMinX(endAttr.frame) - CGRectGetMaxX(startAttr.frame)+1, h);
+            frame.size = CGSizeMake(CGRectGetMinX(endAttr.frame) - CGRectGetMaxX(startAttr.frame), h);
         }
         
         UICollectionViewLayoutAttributes *attr;
