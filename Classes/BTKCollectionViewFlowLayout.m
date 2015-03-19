@@ -87,6 +87,26 @@
     return shouldInvalidate || invalidate;
 }
 
+- (UICollectionViewLayoutInvalidationContext *)invalidationContextForBoundsChange:(CGRect)newBounds
+{
+    UICollectionViewLayoutInvalidationContext *context = [super invalidationContextForBoundsChange:newBounds];
+    NSInteger numOfSections = self.collectionView.numberOfSections;
+    NSMutableArray *indexePaths = NSMutableArray.new;
+    for(NSInteger s = 0 ; s < numOfSections ; s++ ){
+        NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:s];
+        [indexePaths addObject:indexPath];
+    }
+    if(self.shouldStickHeaderViews){
+        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader
+                                          atIndexPaths:indexePaths];
+    }
+    if(self.shouldStickFooterViews){
+        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionFooter
+                                          atIndexPaths:indexePaths];
+    }
+    return context;
+}
+
 #pragma mark Apple Bug workaround
 
 - (void) removeIncorrectAttributes: (NSMutableArray*) attrs
