@@ -88,6 +88,7 @@
 - (void)prepareLayout
 {
     [super prepareLayout];
+    
     NSInteger numOfSections = self.collectionView.numberOfSections;
     
     NSMutableArray *headers = NSMutableArray.new;
@@ -126,19 +127,16 @@
         
         CGFloat l;
         if(s == numOfSections - 1){
-            NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
-            CGRect contentRect = CGRectZero;
-            for(NSInteger i = 0 ; i < numOfItems ; i++){
-                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
-                                                             inSection:s];
-                UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
+            __block CGRect contentRect = CGRectZero;
+            [[self itemAttributesInSection:s] enumerateObjectsUsingBlock:^(UICollectionViewLayoutAttributes *attr, NSUInteger i, BOOL *stop) {
                 if(i==0){
                     contentRect = attr.frame;
                 }
                 else{
                     contentRect = CGRectUnion(contentRect, attr.frame);
                 }
-            }
+            }];
+            
             UIEdgeInsets insets = [self sectionInsetForSection:s];
             contentRect = UIEdgeInsetsInsetRect(contentRect, UIEdgeInsetsMake(-insets.top, -insets.left, -insets.bottom, -insets.right));
             if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
@@ -204,22 +202,13 @@
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSMutableArray *attrs = [super layoutAttributesForElementsInRect:rect].mutableCopy;
     [self removeIncorrectAttributes:attrs];
-    if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-        [self updateHorizontalAlighnmentOfLayoutAttributes:attrs];
-    }
-    else{
-        [self updateVerticalAlighnmentOfLayoutAttributes:attrs];
-    }
-    if(self.shouldStickHeaderViews || self.shouldStickFooterViews){
-        [self updateStickyViews:attrs];
-    }
-    if(self.shouldAlignToPointGrid){
-        [self alignPointGridAlignmentOfLayoutAttributes:attrs];
-    }
-    if(self.collectionElementKindSectionBody || self.collectionElementKindSectionBackground){
-        [self addAdditionalSupplimentalViews:attrs];
-    }
+    [self updateAlighnmentOfLayoutAttributes:attrs];
+    [self alignPointGridAlignmentOfLayoutAttributes:attrs];
+    
+    [self updateStickyViews:attrs];
+    [self addAdditionalSupplimentalViews:attrs];
     [self updateZIndexes:attrs];
+    
     return attrs.copy;
 }
 
@@ -236,20 +225,28 @@
 - (BOOL) shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
     BOOL shouldInvalidate = [super shouldInvalidateLayoutForBoundsChange:newBounds];
-    
-    shouldInvalidate |= self.shouldStickHeaderViews || self.shouldStickFooterViews;
-    
-    BOOL invalidate;
+    BOOL sizeChanged;
     if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-        invalidate = CGRectGetWidth(self.collectionView.bounds) != CGRectGetWidth(newBounds);
+        sizeChanged = CGRectGetWidth(self.collectionView.bounds) != CGRectGetWidth(newBounds);
     }
     else{
-        invalidate = CGRectGetHeight(self.collectionView.bounds) != CGRectGetHeight(newBounds);
+        sizeChanged = CGRectGetHeight(self.collectionView.bounds) != CGRectGetHeight(newBounds);
     }
-    if(invalidate){
+    if(sizeChanged){
         [self invalidateLayout];
     }
-    return shouldInvalidate || invalidate;
+    shouldInvalidate |= sizeChanged;
+    
+    if(self.shouldStickHeaderViews || self.shouldStickFooterViews){
+        if(!shouldInvalidate){
+            // Partial Update only if shouldInvalidate is NO
+            // Use Zero rect to create empty invalidation context from super class
+            UICollectionViewLayoutInvalidationContext *context = [self invalidationContextForBoundsChange:CGRectZero];
+            [self invalidateLayoutWithContext:context];
+        }
+    }
+
+    return shouldInvalidate;
 }
 
 - (UICollectionViewLayoutInvalidationContext *)invalidationContextForBoundsChange:(CGRect)newBounds
@@ -306,7 +303,7 @@
 
 #pragma mark zIndex
 
-- (void) updateZIndexes: (NSMutableArray*) attrs
+- (void) updateZIndexes: (NSArray*) attrs
 {
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         [self updateZIndex:attr];
@@ -336,22 +333,13 @@
 
 - (void) addMissingHeaderAndFooterViews: (NSMutableArray*) attrs
 {
-    NSMutableIndexSet *sectionsItemExists = [NSMutableIndexSet indexSet];
-    NSMutableIndexSet *sectionsHeaderExists = [NSMutableIndexSet indexSet];
-    NSMutableIndexSet *sectionsFooterExists = [NSMutableIndexSet indexSet];
-    
-    for (UICollectionViewLayoutAttributes *attr in attrs) {
-        NSInteger s = attr.indexPath.section;
-        if (attr.representedElementCategory == UICollectionElementCategoryCell) {
-            [sectionsItemExists addIndex:s];
-        }
-        else if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
-            [sectionsHeaderExists addIndex:s];
-        }
-        else if (attr.representedElementKind == UICollectionElementKindSectionFooter) {
-            [sectionsFooterExists addIndex:s];
-        }
+    if(!self.shouldStickHeaderViews && !self.shouldStickFooterViews){
+        return;
     }
+    
+    NSIndexSet *sectionsItemExists = [self sectionsItemExists:attrs];
+    NSIndexSet *sectionsHeaderExists = [self sectionsHeaderExists:attrs];
+    NSIndexSet *sectionsFooterExists = [self sectionsFooterExists:attrs];
     
     NSMutableIndexSet *headerMissingSections = sectionsItemExists.mutableCopy;
     NSMutableIndexSet *footerMissingSections = sectionsItemExists.mutableCopy;
@@ -385,6 +373,9 @@
 
 - (void) updateStickyViews : (NSMutableArray*) attrs
 {
+    if(!self.shouldStickHeaderViews && !self.shouldStickFooterViews){
+        return;
+    }
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         [self updateStickyView:attr];
     }
@@ -441,7 +432,17 @@
 
 #pragma mark Alignment
 
-- (void) updateVerticalAlighnmentOfLayoutAttributes : (NSMutableArray*) attrs
+- (void) updateAlighnmentOfLayoutAttributes : (NSArray*) attrs
+{
+    if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+        [self updateHorizontalAlighnmentOfLayoutAttributes:attrs];
+    }
+    else{
+        [self updateVerticalAlighnmentOfLayoutAttributes:attrs];
+    }
+}
+
+- (void) updateVerticalAlighnmentOfLayoutAttributes : (NSArray *) attrs
 {
     // Collect item layout per mid y
     NSMutableDictionary *rowCollections = NSMutableDictionary.new;
@@ -508,7 +509,7 @@
     };
 }
 
-- (void) updateHorizontalAlighnmentOfLayoutAttributes : (NSMutableArray*) attrs
+- (void) updateHorizontalAlighnmentOfLayoutAttributes : (NSArray *) attrs
 {
     // Collect item layout per mid y
     NSMutableDictionary *rowCollections = NSMutableDictionary.new;
@@ -577,8 +578,12 @@
 
 #pragma mark Point align
 
-- (void) alignPointGridAlignmentOfLayoutAttributes : (NSMutableArray*) attrs
+- (void) alignPointGridAlignmentOfLayoutAttributes : (NSArray*) attrs
 {
+    if(!self.shouldAlignToPointGrid){
+        return;
+    }
+    
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         if (attr.representedElementCategory != UICollectionElementCategoryCell) {
             continue;
@@ -594,6 +599,10 @@
 
 - (void) addAdditionalSupplimentalViews : (NSMutableArray*) attrs
 {
+    if(self.collectionElementKindSectionBody == nil && self.collectionElementKindSectionBackground == nil){
+        return;
+    }
+    
     NSMutableIndexSet *sectionsElementExists = [NSMutableIndexSet indexSet];
     
     for (UICollectionViewLayoutAttributes *attr in attrs) {
@@ -683,5 +692,77 @@ minimumInteritemSpacingForSectionAtIndex:section];
                              layout:self
         verticalAlignmentForSection:section];
 }
+
+#pragma mark Utils
+
+- (NSIndexSet*) sectionsElementExists: (NSArray*) attrs
+{
+    NSMutableIndexSet *sections = [NSMutableIndexSet indexSet];
+    
+    for (UICollectionViewLayoutAttributes *attr in attrs) {
+        NSInteger s = attr.indexPath.section;
+        if (attr.representedElementCategory == UICollectionElementCategoryCell) {
+            [sections addIndex:s];
+        }
+    }
+    return sections.copy;
+}
+
+
+- (NSIndexSet*) sectionsItemExists: (NSArray*) attrs
+{
+    return [self sectionsElementExists:attrs
+                              category:UICollectionElementCategoryCell
+                                  kind:nil];
+}
+
+- (NSIndexSet*) sectionsHeaderExists: (NSArray*) attrs
+{
+    return [self sectionsElementExists:attrs
+                              category:UICollectionElementCategorySupplementaryView
+                                  kind:UICollectionElementKindSectionHeader];
+}
+
+- (NSIndexSet*) sectionsFooterExists: (NSArray*) attrs
+{
+    return [self sectionsElementExists:attrs
+                              category:UICollectionElementCategorySupplementaryView
+                                  kind:UICollectionElementKindSectionFooter];
+}
+
+- (NSIndexSet*) sectionsElementExists:(NSArray*)attrs
+                             category:(UICollectionElementCategory)category
+                                 kind:(NSString*)kind
+{
+    NSMutableIndexSet *sections = [NSMutableIndexSet indexSet];
+    
+    for (UICollectionViewLayoutAttributes *attr in attrs) {
+        if(category != attr.representedElementCategory){
+            continue;
+        }
+        if((kind != nil) && (![kind isEqualToString:attr.representedElementKind])){
+            continue;
+        }
+        NSInteger s = attr.indexPath.section;
+        if (attr.representedElementCategory == UICollectionElementCategoryCell) {
+            [sections addIndex:s];
+        }
+    }
+    return sections.copy;
+}
+
+- (NSArray*) itemAttributesInSection : (NSInteger)s
+{
+    NSMutableArray *attrs = NSMutableArray.new;
+    NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
+    for(NSInteger i = 0 ; i < numOfItems ; i++){
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
+                                                     inSection:s];
+        UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
+        [attrs addObject:attr];
+    }
+    return attrs;
+}
+
 
 @end
