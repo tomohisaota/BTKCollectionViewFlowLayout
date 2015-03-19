@@ -8,6 +8,54 @@
 
 #import "BTKCollectionViewFlowLayout.h"
 
+@interface BTKCollectionViewFlowLayoutSectionInfo : NSObject
+
+@property(nonatomic,assign,readwrite) CGRect headerRect;
+@property(nonatomic,assign,readwrite) CGRect footerRect;
+@property(nonatomic,assign,readonly) CGRect bodyRect;
+@property(nonatomic,assign,readonly) CGRect backgroundRect;
+
+@end
+
+@implementation BTKCollectionViewFlowLayoutSectionInfo
+
+- (CGRect)bodyRect
+{
+    CGRect r;
+    if(self.headerRect.origin.x == self.footerRect.origin.x){
+        r.origin.x = self.headerRect.origin.x;
+        r.origin.y = CGRectGetMaxY(self.headerRect);
+        r.size.width = CGRectGetWidth(self.headerRect);
+        r.size.height = CGRectGetMinY(self.footerRect) - CGRectGetMaxY(self.headerRect);
+    }
+    else{
+        r.origin.x = CGRectGetMaxX(self.headerRect);
+        r.origin.y = self.headerRect.origin.y;
+        r.size.width = CGRectGetMinX(self.footerRect) - CGRectGetMaxX(self.headerRect);
+        r.size.height = CGRectGetHeight(self.headerRect);
+    }
+    return r;
+}
+
+- (CGRect)backgroundRect
+{
+    return CGRectUnion(self.headerRect, self.footerRect);
+}
+
+- (NSString*) debugDescription
+{
+    return [NSString stringWithFormat:@"header = %@ footer = %@ body = %@ background = %@",NSStringFromCGRect(self.headerRect),NSStringFromCGRect(self.footerRect),NSStringFromCGRect(self.bodyRect),NSStringFromCGRect(self.backgroundRect)];
+}
+
+@end
+
+
+@interface BTKCollectionViewFlowLayout()
+
+@property(nonatomic,strong,readonly) NSArray *infos;
+
+@end
+
 @implementation BTKCollectionViewFlowLayout
 
 - (instancetype)init
@@ -26,6 +74,7 @@
 
 - (void) commonInit
 {
+    _infos = NSMutableArray.new;
     _horizontalAlignment = UIControlContentHorizontalAlignmentFill;
     _verticalAlignment = UIControlContentVerticalAlignmentFill;
     
@@ -34,6 +83,122 @@
     _zIndexForHeader = 3;
     _zIndexForFooter = 3;
     _zIndexForBackground = 0;
+}
+
+- (void)prepareLayout
+{
+    [super prepareLayout];
+    NSInteger numOfSections = self.collectionView.numberOfSections;
+    
+    NSMutableArray *headers = NSMutableArray.new;
+    NSMutableArray *footers = NSMutableArray.new;
+    
+    for(NSInteger s = 0 ; s < numOfSections ; s++){
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0
+                                                     inSection:s];
+        UICollectionViewLayoutAttributes *header = [super layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+                                                                                         atIndexPath:indexPath];
+        UICollectionViewLayoutAttributes *footer = [super layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
+                                                                                         atIndexPath:indexPath];
+        if(header == nil){
+            header = UICollectionViewLayoutAttributes.new;
+        }
+        [headers addObject:header];
+        if(footer == nil){
+            footer = UICollectionViewLayoutAttributes.new;
+        }
+        [footers addObject:footer];
+    }
+    
+    NSMutableArray *infos = NSMutableArray.new;
+    for(NSInteger s = 0 ; s < numOfSections ; s++){
+        BTKCollectionViewFlowLayoutSectionInfo *info = BTKCollectionViewFlowLayoutSectionInfo.new;
+        [infos addObject:info];
+        
+        UICollectionViewLayoutAttributes *header = headers[s];
+        info.headerRect = header.frame;
+        
+        UICollectionViewLayoutAttributes *footer = footers[s];
+        if(!CGSizeEqualToSize(footer.frame.size, CGSizeZero)){
+            info.footerRect = footer.frame;
+            continue;
+        }
+        
+        CGFloat l;
+        if(s == numOfSections - 1){
+            NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
+            CGRect contentRect = CGRectZero;
+            for(NSInteger i = 0 ; i < numOfItems ; i++){
+                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
+                                                             inSection:s];
+                UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
+                if(i==0){
+                    contentRect = attr.frame;
+                }
+                else{
+                    contentRect = CGRectUnion(contentRect, attr.frame);
+                }
+            }
+            UIEdgeInsets insets = [self sectionInsetForSection:s];
+            contentRect = UIEdgeInsetsInsetRect(contentRect, UIEdgeInsetsMake(-insets.top, -insets.left, -insets.bottom, -insets.right));
+            if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+                l = CGRectGetHeight(contentRect);
+            }
+            else{
+                l = CGRectGetWidth(contentRect);
+            }
+        }
+        else{
+            // Calculate footer frame from next header
+            UICollectionViewLayoutAttributes *nextHeader = headers[s+1];
+            if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+                l = CGRectGetMinY(nextHeader.frame) - CGRectGetMaxY(header.frame);
+            }
+            else{
+                l = CGRectGetMinY(nextHeader.frame) - CGRectGetMaxY(header.frame);
+            }
+        }
+        CGFloat x,y;
+        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+            x = CGRectGetMinX(header.frame);
+            y = CGRectGetMaxY(header.frame) + l;
+        }
+        else{
+            x = CGRectGetMaxX(header.frame) + l;
+            y = CGRectGetMinY(header.frame);
+        }
+        info.footerRect = CGRectMake(x, y, 0, 0);
+    }
+    
+    //Override header size
+    UIEdgeInsets i = self.collectionView.contentInset;
+    if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+        CGFloat w = CGRectGetWidth(self.collectionView.frame) - i.left - i.right;
+        for(NSInteger s = 0 ; s < numOfSections ; s++){
+            BTKCollectionViewFlowLayoutSectionInfo *info = infos[s];
+            CGRect r = info.headerRect;
+            r.size.width = w;
+            info.headerRect = r;
+            
+            r = info.footerRect;
+            r.size.width = w;
+            info.footerRect = r;
+        }
+    }
+    else{
+        CGFloat h = CGRectGetHeight(self.collectionView.frame) - i.top - i.bottom;
+        for(NSInteger s = 0 ; s < numOfSections ; s++){
+            BTKCollectionViewFlowLayoutSectionInfo *info = infos[s];
+            CGRect r = info.headerRect;
+            r.size.height = h;
+            info.headerRect = r;
+            
+            r = info.footerRect;
+            r.size.height = h;
+            info.footerRect = r;
+        }
+    }
+    _infos = infos.copy;
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
@@ -54,7 +219,7 @@
     if(self.collectionElementKindSectionBody || self.collectionElementKindSectionBackground){
         [self addAdditionalSupplimentalViews:attrs];
     }
-    [self updateZIndex:attrs];
+    [self updateZIndexes:attrs];
     return attrs.copy;
 }
 
@@ -87,25 +252,25 @@
     return shouldInvalidate || invalidate;
 }
 
-- (UICollectionViewLayoutInvalidationContext *)invalidationContextForBoundsChange:(CGRect)newBounds
-{
-    UICollectionViewLayoutInvalidationContext *context = [super invalidationContextForBoundsChange:newBounds];
-    NSInteger numOfSections = self.collectionView.numberOfSections;
-    NSMutableArray *indexePaths = NSMutableArray.new;
-    for(NSInteger s = 0 ; s < numOfSections ; s++ ){
-        NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:s];
-        [indexePaths addObject:indexPath];
-    }
-    if(self.shouldStickHeaderViews){
-        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader
-                                          atIndexPaths:indexePaths];
-    }
-    if(self.shouldStickFooterViews){
-        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionFooter
-                                          atIndexPaths:indexePaths];
-    }
-    return context;
-}
+//- (UICollectionViewLayoutInvalidationContext *)invalidationContextForBoundsChange:(CGRect)newBounds
+//{
+//    UICollectionViewLayoutInvalidationContext *context = [super invalidationContextForBoundsChange:newBounds];
+//    NSInteger numOfSections = self.collectionView.numberOfSections;
+//    NSMutableArray *indexePaths = NSMutableArray.new;
+//    for(NSInteger s = 0 ; s < numOfSections ; s++ ){
+//        NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:s];
+//        [indexePaths addObject:indexPath];
+//    }
+//    if(self.shouldStickHeaderViews){
+//        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader
+//                                          atIndexPaths:indexePaths];
+//    }
+//    if(self.shouldStickFooterViews){
+//        [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionFooter
+//                                          atIndexPaths:indexePaths];
+//    }
+//    return context;
+//}
 
 #pragma mark Apple Bug workaround
 
@@ -134,24 +299,29 @@
 
 #pragma mark zIndex
 
-- (void) updateZIndex: (NSMutableArray*) attrs
+- (void) updateZIndexes: (NSMutableArray*) attrs
 {
     for (UICollectionViewLayoutAttributes *attr in attrs) {
-        if (attr.representedElementCategory == UICollectionElementCategoryCell) {
-            attr.zIndex = self.zIndexForItem;
-        }
-        else if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
-            attr.zIndex = self.zIndexForHeader;
-        }
-        else if (attr.representedElementKind == UICollectionElementKindSectionFooter) {
-            attr.zIndex = self.zIndexForFooter;
-        }
-        else if ([attr.representedElementKind isEqualToString:self.collectionElementKindSectionBody]) {
-            attr.zIndex = self.zIndexForBody;
-        }
-        else if ([attr.representedElementKind isEqualToString:self.collectionElementKindSectionBackground]) {
-            attr.zIndex = self.zIndexForBackground;
-        }
+        [self updateZIndex:attr];
+    }
+}
+
+- (void) updateZIndex: (UICollectionViewLayoutAttributes*) attr
+{
+    if (attr.representedElementCategory == UICollectionElementCategoryCell) {
+        attr.zIndex = self.zIndexForItem;
+    }
+    else if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
+        attr.zIndex = self.zIndexForHeader;
+    }
+    else if (attr.representedElementKind == UICollectionElementKindSectionFooter) {
+        attr.zIndex = self.zIndexForFooter;
+    }
+    else if ([attr.representedElementKind isEqualToString:self.collectionElementKindSectionBody]) {
+        attr.zIndex = self.zIndexForBody;
+    }
+    else if ([attr.representedElementKind isEqualToString:self.collectionElementKindSectionBackground]) {
+        attr.zIndex = self.zIndexForBackground;
     }
 }
 
@@ -187,7 +357,9 @@
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
             UICollectionViewLayoutAttributes *attr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                           atIndexPath:indexPath];
-            [attrs addObject:attr];
+            if(attr){
+                [attrs addObject:attr];
+            }
         }];
     }
     
@@ -197,7 +369,9 @@
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
             UICollectionViewLayoutAttributes *attr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
                                                                                           atIndexPath:indexPath];
-            [attrs addObject:attr];
+            if(attr){
+                [attrs addObject:attr];
+            }
         }];
     }
 }
@@ -206,71 +380,57 @@
 {
     [self addMissingHeaderAndFooterViews:attrs];
     
-    CGPoint contentOffset = self.collectionView.contentOffset;
     for (UICollectionViewLayoutAttributes *attr in attrs) {
-        if((attr.representedElementKind != UICollectionElementKindSectionHeader) &&
-           attr.representedElementKind != UICollectionElementKindSectionFooter){
-            continue;
-        }
-        NSInteger s = attr.indexPath.section;
-        NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
-        if(numOfItems == 0){
-            continue;
-        }
-        UIEdgeInsets insets = [self sectionInsetForSection:s];
-        
-        // Calculate Content Rect for the section
-        CGRect contentRect = CGRectZero;
-        for(NSInteger i = 0 ; i < numOfItems ; i++){
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
-                                                         inSection:s];
-            UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
-            if(i==0){
-                contentRect = attr.frame;
-            }
-            else{
-                contentRect = CGRectUnion(contentRect, attr.frame);
-            }
-        }
-        contentRect = UIEdgeInsetsInsetRect(contentRect, UIEdgeInsetsMake(-insets.top, -insets.left, -insets.bottom, -insets.right));
-        
-        CGRect f = attr.frame;
-        CGFloat w = CGRectGetWidth(f);
-        CGFloat h = CGRectGetHeight(f);
-        if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
-            if(self.shouldStickHeaderViews){
-                if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-                    CGFloat topOfView = contentOffset.y + self.collectionView.contentInset.top;
-                    CGFloat relativeToFirst = CGRectGetMinY(contentRect) - h;
-                    CGFloat relativeToLast = CGRectGetMaxY(contentRect) - h;
-                    f.origin.y = MIN(MAX(topOfView,relativeToFirst),relativeToLast);
-                }
-                else{
-                    CGFloat leftOfView = contentOffset.x + self.collectionView.contentInset.left;
-                    CGFloat relativeToFirst = CGRectGetMinX(contentRect) - w;
-                    CGFloat relativeToLast = CGRectGetMaxX(contentRect) - w;
-                    f.origin.x = MIN(MAX(leftOfView,relativeToFirst),relativeToLast);
-                }
-            }
+        [self updateStickyView:attr];
+    }
+}
+
+- (void) updateStickyView : (UICollectionViewLayoutAttributes*) attr
+{
+    BOOL shouldProcess = NO;
+    shouldProcess |= (attr.representedElementKind == UICollectionElementKindSectionHeader) && self.shouldStickHeaderViews;
+    shouldProcess |= (attr.representedElementKind == UICollectionElementKindSectionFooter) && self.shouldStickFooterViews;
+    if(!shouldProcess){
+        return;
+    }
+    
+    CGPoint contentOffset = self.collectionView.contentOffset;
+    NSInteger s = attr.indexPath.section;
+    
+    BTKCollectionViewFlowLayoutSectionInfo *info = self.infos[s];
+    CGRect r = info.bodyRect;
+    CGRect f = attr.frame;
+    CGFloat w = CGRectGetWidth(f);
+    CGFloat h = CGRectGetHeight(f);
+    if (attr.representedElementKind == UICollectionElementKindSectionHeader) {
+        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+            CGFloat topOfView = contentOffset.y + self.collectionView.contentInset.top;
+            CGFloat relativeToFirst = CGRectGetMinY(r) - h;
+            CGFloat relativeToLast = CGRectGetMaxY(r) - h;
+            f.origin.y = MIN(MAX(topOfView,relativeToFirst),relativeToLast);
         }
         else{
-            if(self.shouldStickFooterViews){
-                if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-                    CGFloat bottomOfView = contentOffset.y + self.collectionView.frame.size.height - h - self.collectionView.contentInset.bottom;
-                    CGFloat relativeToFirst = CGRectGetMinY(contentRect);
-                    CGFloat relativeToLast = CGRectGetMaxY(contentRect);
-                    f.origin.y = MIN(MAX(bottomOfView,relativeToFirst),relativeToLast);
-                }
-                else{
-                    CGFloat rightOfView = contentOffset.x + self.collectionView.frame.size.width - w - self.collectionView.contentInset.right;
-                    CGFloat relativeToFirst = CGRectGetMinX(contentRect);
-                    CGFloat relativeToLast = CGRectGetMaxX(contentRect);
-                    f.origin.x = MIN(MAX(rightOfView,relativeToFirst),relativeToLast);
-                }
-            }
+            CGFloat leftOfView = contentOffset.x + self.collectionView.contentInset.left;
+            CGFloat relativeToFirst = CGRectGetMinX(r) - w;
+            CGFloat relativeToLast = CGRectGetMaxX(r) - w;
+            f.origin.x = MIN(MAX(leftOfView,relativeToFirst),relativeToLast);
         }
-        attr.frame = f;
     }
+    else{
+        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
+            CGFloat bottomOfView = contentOffset.y + self.collectionView.frame.size.height - h - self.collectionView.contentInset.bottom;
+            CGFloat relativeToFirst = CGRectGetMinY(r);
+            CGFloat relativeToLast = CGRectGetMaxY(r);
+            f.origin.y = MIN(MAX(bottomOfView,relativeToFirst),relativeToLast);
+        }
+        else{
+            CGFloat rightOfView = contentOffset.x + self.collectionView.frame.size.width - w - self.collectionView.contentInset.right;
+            CGFloat relativeToFirst = CGRectGetMinX(r);
+            CGFloat relativeToLast = CGRectGetMaxX(r);
+            f.origin.x = MIN(MAX(rightOfView,relativeToFirst),relativeToLast);
+        }
+    }
+    attr.frame = f;
 }
 
 #pragma mark Alignment
@@ -450,92 +610,25 @@
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind
                                                                      atIndexPath:(NSIndexPath *)indexPath
 {
+    UICollectionViewLayoutAttributes *attr;
     if(![elementKind isEqualToString:self.collectionElementKindSectionBody] &&
        ![elementKind isEqualToString:self.collectionElementKindSectionBackground]){
-        return [super layoutAttributesForSupplementaryViewOfKind:elementKind
+        attr = [super layoutAttributesForSupplementaryViewOfKind:elementKind
                                                      atIndexPath:indexPath];
-    }
-    UIEdgeInsets contentInset = self.collectionView.contentInset;
-    CGSize size = self.collectionView.frame.size;
-    
-    UICollectionViewLayoutAttributes *startAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                                                       atIndexPath:indexPath];
-    UICollectionViewLayoutAttributes *endAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
-                                                                                     atIndexPath:indexPath];
-    
-    if(CGSizeEqualToSize(endAttr.frame.size, CGSizeZero)){
-        // Footer does not exists.
-        CGSize contentSize;
-        if(self.collectionView.numberOfSections - 1 != indexPath.section){
-            // Use next header as reference
-            NSIndexPath *nextIndex = [NSIndexPath indexPathForItem:0 inSection:indexPath.section + 1];
-            endAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                           atIndexPath:nextIndex];
-            contentSize.width = CGRectGetMinX(endAttr.frame) - CGRectGetMaxX(startAttr.frame);
-            contentSize.height = CGRectGetMinY(endAttr.frame) - CGRectGetMaxY(startAttr.frame);
-        }
-        else{
-            // Check all items to calculate content area
-            NSInteger s = indexPath.section;
-            NSInteger numOfItems = [self.collectionView numberOfItemsInSection:s];
-            UIEdgeInsets insets = [self sectionInsetForSection:s];
-            
-            CGRect contentRect = CGRectZero;
-            for(NSInteger i = 0 ; i < numOfItems ; i++){
-                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i
-                                                             inSection:s];
-                UICollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:indexPath];
-                if(i==0){
-                    contentRect = attr.frame;
-                }
-                else{
-                    contentRect = CGRectUnion(contentRect, attr.frame);
-                }
-            }
-            contentSize = contentRect.size;
-            contentSize.width += insets.left + insets.right;
-            contentSize.height += insets.top + insets.bottom;
-        }
-        // Create dummy attribute from contentSize
-        endAttr = UICollectionViewLayoutAttributes.new;
-        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-            endAttr.frame = CGRectMake(0, CGRectGetMaxY(startAttr.frame) + contentSize.height, 0, 0);
-        }
-        else{
-            endAttr.frame = CGRectMake(CGRectGetMaxX(startAttr.frame) + contentSize.width, 0, 0, 0);
-        }
-    }
-    
-    CGRect frame;
-    if([elementKind isEqualToString:self.collectionElementKindSectionBody]){
-        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-            CGFloat w = size.width - contentInset.left - contentInset.right;
-            frame.origin = CGPointMake(CGRectGetMinX(startAttr.frame), CGRectGetMaxY(startAttr.frame));
-            frame.size = CGSizeMake(w, CGRectGetMinY(endAttr.frame) - CGRectGetMaxY(startAttr.frame));
-        }
-        else{
-            CGFloat h = size.height - contentInset.top - contentInset.bottom;
-            frame.origin = CGPointMake(CGRectGetMaxX(startAttr.frame), CGRectGetMinY(startAttr.frame));
-            frame.size = CGSizeMake(CGRectGetMinX(endAttr.frame) - CGRectGetMaxX(startAttr.frame), h);
-        }
+        [self updateStickyView:attr];
     }
     else{
-        if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-            CGFloat w = size.width - contentInset.left - contentInset.right;
-            frame.origin = CGPointMake(CGRectGetMinX(startAttr.frame), CGRectGetMinY(startAttr.frame));
-            frame.size = CGSizeMake(w, CGRectGetMaxY(endAttr.frame) - CGRectGetMinY(startAttr.frame));
+        attr = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:elementKind
+                                                                              withIndexPath:indexPath];
+        BTKCollectionViewFlowLayoutSectionInfo *info = self.infos[indexPath.section];
+        if([elementKind isEqualToString:self.collectionElementKindSectionBody]){
+            attr.frame = info.bodyRect;
         }
         else{
-            CGFloat h = size.height - contentInset.top - contentInset.bottom;
-            frame.origin = CGPointMake(CGRectGetMinX(startAttr.frame), CGRectGetMinY(startAttr.frame));
-            frame.size = CGSizeMake(CGRectGetMaxX(endAttr.frame) - CGRectGetMinX(startAttr.frame), h);
+            attr.frame = info.backgroundRect;
         }
     }
-    
-    UICollectionViewLayoutAttributes *attr;
-    attr = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:elementKind
-                                                                          withIndexPath:indexPath];
-    attr.frame = frame;
+    [self updateZIndex:attr];
     return attr;
 }
 
