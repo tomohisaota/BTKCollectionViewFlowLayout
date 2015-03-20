@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "BTKCollectionViewDelegateFlowLayout.h"
+#import "DataSource.h"
 
-@interface ViewController : UIViewController<BTKCollectionViewDelegateFlowLayout,UICollectionViewDataSource>
+@interface ViewController : UIViewController<BTKCollectionViewDelegateFlowLayout>
+
+@property(nonatomic,strong,readonly) DataSource *dataSource;
 
 @end
 

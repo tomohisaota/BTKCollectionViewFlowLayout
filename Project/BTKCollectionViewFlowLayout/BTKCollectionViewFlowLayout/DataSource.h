@@ -6,8 +6,22 @@
 //  Copyright (c) 2015年 Tomohisa Ota. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface DataSource : NSObject
+typedef enum BTKViewControllerCellType : NSUInteger {
+    BTKViewControllerCellTypeNum, // Default
+    BTKViewControllerCellTypeFizz,
+    BTKViewControllerCellTypeBuzz,
+    BTKViewControllerCellTypeFizzBuzz,
+    BTKViewControllerCellTypeEnd
+} BTKViewControllerCellType;
+
+@interface DataSource : NSObject<UICollectionViewDataSource>
+
+@property(nonatomic,strong,readonly) NSString *bodyViewKind;
+@property(nonatomic,strong,readonly) NSString *backgroundViewKind;
+
+- (void) prepareCollectionView:(UICollectionView*)collectionView;
+- (BTKViewControllerCellType) typeForIndexPath : (NSIndexPath*)indexPath;
 
 @end
