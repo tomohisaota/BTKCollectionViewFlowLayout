@@ -81,7 +81,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
     //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
                                        collectionViewLayout:self.collectionViewLayout];
-    _collectionView.contentInset = UIEdgeInsetsMake(50, 50, 50, 50);
+    //_collectionView.contentInset = UIEdgeInsetsMake(50, 50, 50, 50);
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     [self valueChanged:nil];
@@ -222,7 +222,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
 - (NSInteger) collectionView:(UICollectionView *)collectionView
       numberOfItemsInSection:(NSInteger)section
 {
-    return 20;
+    return 1000;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
@@ -371,11 +371,11 @@ minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
     switch ([self typeForIndexPath:indexPath]) {
         case BTKViewControllerCellTypeFizz:
-            return CGSizeMake(100, 20);
+            return CGSizeMake(10, 20);
         case BTKViewControllerCellTypeBuzz:
             return CGSizeMake(50, 40);
         case BTKViewControllerCellTypeFizzBuzz:
-            return CGSizeMake(100, 40);
+            return CGSizeMake(10, 40);
         case BTKViewControllerCellTypeNum:
         default:
             return CGSizeMake(50, 20);
