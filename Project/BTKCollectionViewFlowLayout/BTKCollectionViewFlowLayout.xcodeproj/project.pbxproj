@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		EA992A7F1ABBBB8600AA04B0 /* DataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EA992A7E1ABBBB8600AA04B0 /* DataSource.m */; };
+		EA992A821ABBC6CB00AA04B0 /* CommanderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */; };
+		EA992A851ABBC71400AA04B0 /* CommanderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EA992A841ABBC71400AA04B0 /* CommanderView.m */; };
 		EAF50ADD1AB699920067AEC2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50ADC1AB699920067AEC2 /* main.m */; };
 		EAF50AE01AB699920067AEC2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50ADF1AB699920067AEC2 /* AppDelegate.m */; };
 		EAF50AE31AB699920067AEC2 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50AE21AB699920067AEC2 /* ViewController.m */; };
@@ -32,6 +34,9 @@
 /* Begin PBXFileReference section */
 		EA992A7D1ABBBB8600AA04B0 /* DataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataSource.h; sourceTree = "<group>"; };
 		EA992A7E1ABBBB8600AA04B0 /* DataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSource.m; sourceTree = "<group>"; };
+		EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommanderView.xib; sourceTree = "<group>"; };
+		EA992A831ABBC71400AA04B0 /* CommanderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommanderView.h; sourceTree = "<group>"; };
+		EA992A841ABBC71400AA04B0 /* CommanderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommanderView.m; sourceTree = "<group>"; };
 		EAF50AD71AB699920067AEC2 /* BTKCollectionViewFlowLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTKCollectionViewFlowLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAF50ADB1AB699920067AEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EAF50ADC1AB699920067AEC2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -77,6 +82,9 @@
 				EAF50ADF1AB699920067AEC2 /* AppDelegate.m */,
 				EAF50B011AB69B2A0067AEC2 /* BTKCollectionViewCell.h */,
 				EAF50B021AB69B2A0067AEC2 /* BTKCollectionViewCell.m */,
+				EA992A831ABBC71400AA04B0 /* CommanderView.h */,
+				EA992A841ABBC71400AA04B0 /* CommanderView.m */,
+				EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */,
 				EA992A7D1ABBBB8600AA04B0 /* DataSource.h */,
 				EA992A7E1ABBBB8600AA04B0 /* DataSource.m */,
 				EAF50AE71AB699920067AEC2 /* Images.xcassets */,
@@ -109,8 +117,8 @@
 		EAF50AD91AB699920067AEC2 /* BTKCollectionViewFlowLayout */ = {
 			isa = PBXGroup;
 			children = (
-				EA992A801ABBBBB100AA04B0 /* sample */,
 				EAF50B001AB699E90067AEC2 /* module */,
+				EA992A801ABBBBB100AA04B0 /* sample */,
 				EAF50ADA1AB699920067AEC2 /* Supporting Files */,
 			);
 			path = BTKCollectionViewFlowLayout;
@@ -235,6 +243,7 @@
 				EAF50AE61AB699920067AEC2 /* Main.storyboard in Resources */,
 				EAF50AEB1AB699920067AEC2 /* LaunchScreen.xib in Resources */,
 				EAF50AE81AB699920067AEC2 /* Images.xcassets in Resources */,
+				EA992A821ABBC6CB00AA04B0 /* CommanderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +266,7 @@
 				EA992A7F1ABBBB8600AA04B0 /* DataSource.m in Sources */,
 				EAF50AE01AB699920067AEC2 /* AppDelegate.m in Sources */,
 				EAF50B031AB69B2A0067AEC2 /* BTKCollectionViewCell.m in Sources */,
+				EA992A851ABBC71400AA04B0 /* CommanderView.m in Sources */,
 				EAF50ADD1AB699920067AEC2 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

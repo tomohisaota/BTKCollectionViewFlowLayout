@@ -14,5 +14,9 @@
 
 @property(nonatomic,strong,readonly) DataSource *dataSource;
 
+@property(nonatomic,copy,readwrite) NSString* contentInsetStr;
+@property(nonatomic,assign,readwrite) UIEdgeInsets contentInset;
+
+
 @end
 

@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "BTKCollectionViewFlowLayout.h"
+#import "CommanderView.h"
 
 @interface ViewController ()
 
@@ -15,12 +16,7 @@
 @property(nonatomic,strong,readonly) UICollectionView *collectionView;
 
 
-@property(nonatomic,strong,readonly) UIView *controlView;
-@property(nonatomic,strong,readonly) UISegmentedControl *scrollDirectionControl;
-@property(nonatomic,strong,readonly) UISegmentedControl *hAlignControl;
-@property(nonatomic,strong,readonly) UISegmentedControl *vAlignControl;
-@property(nonatomic,strong,readonly) UISwitch *stickyHeaderSwicth;
-@property(nonatomic,strong,readonly) UISwitch *stickyFooterSwicth;
+@property(nonatomic,strong,readonly) CommanderView *controlView;
 
 @end
 
@@ -30,38 +26,11 @@
 {
     _dataSource = DataSource.new;
     
-    _controlView = UIView.new;
-    _scrollDirectionControl = [UISegmentedControl.alloc initWithItems:@[@"Vertical",@"Horizontal"]];
-    _scrollDirectionControl.selectedSegmentIndex = 0;
-
-    _hAlignControl = [UISegmentedControl.alloc initWithItems:@[
-        @"Fill",
-        @"Left",
-        @"Center",
-        @"Right"]];
-    _hAlignControl.selectedSegmentIndex = 0;
-
-    _vAlignControl = [UISegmentedControl.alloc initWithItems:@[
-        @"Fill",
-        @"Top",
-        @"Center",
-        @"Bottom"]];
-    _vAlignControl.selectedSegmentIndex = 0;
-    
-    for(UISegmentedControl *v in @[_scrollDirectionControl,_hAlignControl,_vAlignControl]){
-        [v addTarget:self
-              action:@selector(valueChanged:)
-    forControlEvents:UIControlEventValueChanged];
-    }
-
-    _stickyHeaderSwicth = UISwitch.new;
-    _stickyFooterSwicth = UISwitch.new;
-
-    for(UISwitch *v in @[_stickyFooterSwicth,_stickyHeaderSwicth]){
-        [v addTarget:self
-              action:@selector(valueChanged:)
-    forControlEvents:UIControlEventValueChanged];
-    }
+    _controlView = CommanderView.newView;
+    __weak typeof(self) wSelf = self;
+    self.controlView.onValueUpdate = ^{
+        [wSelf readViewSettings];
+    };
     
     _collectionViewLayout = BTKCollectionViewFlowLayout.new;
     _collectionViewLayout.collectionElementKindSectionBody = self.dataSource.bodyViewKind;
@@ -70,68 +39,37 @@
     //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
                                        collectionViewLayout:self.collectionViewLayout];
-    //_collectionView.contentInset = UIEdgeInsetsMake(50, 50, 50, 50);
+    _collectionView.contentInset = self.contentInset;
     [self.dataSource prepareCollectionView:self.collectionView];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self.dataSource;
-    [self valueChanged:nil];
-    
-
     [self.view addSubview:self.collectionView];
     [self.view addSubview:_controlView];
-    [_controlView addSubview:_scrollDirectionControl];
-    [_controlView addSubview:_hAlignControl];
-    [_controlView addSubview:_vAlignControl];
-    [_controlView addSubview:_stickyHeaderSwicth];
-    [_controlView addSubview:_stickyFooterSwicth];
+    [self readViewSettings];
 }
-     
- - (void)valueChanged:(id)sender
+
+- (void) readViewSettings
 {
-    self.collectionViewLayout.scrollDirection = self.scrollDirection;
-    self.collectionViewLayout.shouldStickHeaderViews = self.stickyHeaderSwicth.isOn;
-    self.collectionViewLayout.shouldStickFooterViews = self.stickyFooterSwicth.isOn;
+    self.collectionViewLayout.shouldStickHeaderViews = self.controlView.isStickyHeader;
+    self.collectionViewLayout.shouldStickFooterViews = self.controlView.isStickyFooter;
+    self.collectionViewLayout.scrollDirection = self.controlView.scrollDirection;
     [self.collectionView reloadData];
 }
 
-- (UICollectionViewScrollDirection) scrollDirection
+- (NSString *)contentInsetStr
 {
-    if(self.scrollDirectionControl.selectedSegmentIndex == 0){
-        return UICollectionViewScrollDirectionVertical;
-    }
-    else{
-        return UICollectionViewScrollDirectionHorizontal;
-    }
+    return NSStringFromUIEdgeInsets(self.contentInset);
 }
 
-- (UIControlContentHorizontalAlignment) horizontalAlignment
+- (void)setContentInsetStr:(NSString *)contentInsetStr
 {
-    switch (self.hAlignControl.selectedSegmentIndex) {
-        case 1:
-            return UIControlContentHorizontalAlignmentLeft;
-        case 2:
-            return UIControlContentHorizontalAlignmentCenter;
-        case 3:
-            return UIControlContentHorizontalAlignmentRight;
-        case 0:
-        default:
-            return UIControlContentHorizontalAlignmentFill;
-    }
+    self.contentInset = UIEdgeInsetsFromString(contentInsetStr);
 }
 
-- (UIControlContentVerticalAlignment) verticalAlignment
+- (void)setContentInset:(UIEdgeInsets)contentInset
 {
-    switch (self.vAlignControl.selectedSegmentIndex) {
-        case 1:
-            return UIControlContentVerticalAlignmentTop;
-        case 2:
-            return UIControlContentVerticalAlignmentCenter;
-        case 3:
-            return UIControlContentVerticalAlignmentBottom;
-        case 0:
-        default:
-            return UIControlContentVerticalAlignmentFill;
-    }
+    _contentInset = contentInset;
+    self.collectionView.contentInset = contentInset;
 }
 
 - (void)viewDidLayoutSubviews
@@ -141,14 +79,6 @@
     CGRect b = self.view.bounds;
     self.collectionView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(0, 0, controlViewHeight, 0));
     self.controlView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(CGRectGetHeight(self.collectionView.frame), 0, 0, 0));
-    CGFloat x = (NSInteger)(CGRectGetWidth(self.controlView.bounds)/2) + CGRectGetWidth(self.stickyHeaderSwicth.frame)/2;
-    self.scrollDirectionControl.center = CGPointMake(x, controlViewHeight * 1 / 6);
-    self.hAlignControl.center          = CGPointMake(x, controlViewHeight * 3 / 6);
-    self.vAlignControl.center          = CGPointMake(x, controlViewHeight * 5 / 6);
-    
-    x = self.stickyHeaderSwicth.center.x;
-    self.stickyHeaderSwicth.center = CGPointMake(x, controlViewHeight * 1 / 4);
-    self.stickyFooterSwicth.center = CGPointMake(x, controlViewHeight * 3 / 4);
 }
 
 #pragma mark UICollectionViewDelegateFlowLayout
@@ -211,14 +141,14 @@ referenceSizeForFooterInSection:(NSInteger)section
                                                 layout:(UICollectionViewLayout *)collectionViewLayout
                          horizontalAlignmentForSection:(NSInteger)section
 {
-    return self.horizontalAlignment;
+    return self.controlView.horizontalAlignment;
 }
 
 - (UIControlContentVerticalAlignment) collectionView:(UICollectionView *)collectionView
                                               layout:(UICollectionViewLayout *)collectionViewLayout
                          verticalAlignmentForSection:(NSInteger)section
 {
-    return self.verticalAlignment;
+    return self.controlView.verticalAlignment;
 }
 
 @end
