@@ -40,6 +40,7 @@
     [self.dataSource prepareCollectionView:self.collectionView];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self.dataSource;
+    self.collectionView.backgroundColor = UIColor.whiteColor;
     [self.view addSubview:self.collectionView];
     [self.view addSubview:_controlView];
     [self readViewSettings];
@@ -94,11 +95,11 @@ minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
     switch ([self.dataSource typeForIndexPath:indexPath]) {
         case BTKViewControllerCellTypeFizz:
-            return CGSizeMake(10, 20);
+            return CGSizeMake(100, 20);
         case BTKViewControllerCellTypeBuzz:
             return CGSizeMake(50, 40);
         case BTKViewControllerCellTypeFizzBuzz:
-            return CGSizeMake(10, 40);
+            return CGSizeMake(100, 40);
         case BTKViewControllerCellTypeNum:
         default:
             return CGSizeMake(50, 20);

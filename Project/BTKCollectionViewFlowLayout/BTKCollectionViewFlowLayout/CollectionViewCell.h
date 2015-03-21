@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BTKCollectionViewCell : UICollectionViewCell
+@interface CollectionViewCell : UICollectionViewCell
 
-@property(copy) void (^onLayoutSubview)(BTKCollectionViewCell *cell);
+@property(nonatomic,strong,readonly) UILabel *label;
 
 @end

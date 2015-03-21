@@ -7,7 +7,7 @@
 //
 
 #import "DataSource.h"
-#import "BTKCollectionViewCell.h"
+#import "CollectionViewCell.h"
 #import "CollectionReusableView.h"
 
 @implementation DataSource
@@ -27,7 +27,7 @@
 {
     // Register cell for each type
     for(int i = 0 ; i < BTKViewControllerCellTypeEnd ; i++){
-        [collectionView registerClass:[BTKCollectionViewCell class]
+        [collectionView registerClass:[CollectionViewCell class]
                 forCellWithReuseIdentifier:[self reuseIdentifierForType:i]];
     }
     [collectionView registerClass:[CollectionReusableView class]
@@ -80,76 +80,27 @@
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     BTKViewControllerCellType type = [self typeForIndexPath:indexPath];
-    BTKCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:[self reuseIdentifierForType:type]
+    CollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:[self reuseIdentifierForType:type]
                                                                             forIndexPath:indexPath];
     switch (type) {
         case BTKViewControllerCellTypeFizz:{
-            UILabel *textLabel = (UILabel*)[cell viewWithTag:1];
-            if(!textLabel){
-                textLabel = [[UILabel alloc]init];
-                textLabel.textAlignment = NSTextAlignmentCenter;
-                textLabel.tag = 1;
-                textLabel.backgroundColor = [UIColor whiteColor];
-                textLabel.text = @"Fizz";
-                textLabel.textColor = [UIColor blueColor];
-                [cell addSubview:textLabel];
-                [cell setNeedsLayout];
-            }
+            cell.label.text = @"Fizz";
             break;
         }
         case BTKViewControllerCellTypeBuzz:{
-            UILabel *textLabel = (UILabel*)[cell viewWithTag:1];
-            if(!textLabel){
-                textLabel = [[UILabel alloc]init];
-                textLabel.textAlignment = NSTextAlignmentCenter;
-                textLabel.tag = 1;
-                textLabel.backgroundColor = [UIColor whiteColor];
-                textLabel.text = @"Buzz";
-                textLabel.textColor = [UIColor redColor];
-                [cell addSubview:textLabel];
-                [cell setNeedsLayout];
-            }
+            cell.label.text = @"Buzz";
             break;
         }
         case BTKViewControllerCellTypeFizzBuzz:{
             // Fizz Buzz should be button
-            UIButton *textButton = (UIButton*)[cell viewWithTag:1];
-            if(!textButton){
-                textButton = [UIButton buttonWithType:UIButtonTypeCustom];
-                textButton.tag = 1;
-                textButton.backgroundColor = [UIColor whiteColor];
-                [textButton setTitle:@"Fizz Buzz" forState:UIControlStateNormal];
-                [textButton setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-                [textButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-                [cell addSubview:textButton];
-                [cell setNeedsLayout];
-            }
+            cell.label.text = @"Fizz Buzz";
             break;
         }
         case BTKViewControllerCellTypeNum:
         default:{
-            UILabel *textLabel = (UILabel*)[cell viewWithTag:1];
-            if(!textLabel){
-                textLabel = [[UILabel alloc]init];
-                textLabel.textAlignment = NSTextAlignmentCenter;
-                textLabel.tag = 1;
-                textLabel.backgroundColor = [UIColor whiteColor];
-                textLabel.textColor = [UIColor blackColor];
-                [cell addSubview:textLabel];
-                [cell setNeedsLayout];
-            }
-            // Num should be updated
-            textLabel.text = [NSString stringWithFormat:@"%zd",indexPath.item + 1];
+            cell.label.text = [NSString stringWithFormat:@"%zd",indexPath.item + 1];
             break;
         }
-    }
-    // view with tag 1 is the target view.
-    // Resize target view to fill cell
-    if(!cell.onLayoutSubview){
-        cell.onLayoutSubview = ^(BTKCollectionViewCell *cell){
-            UIView *view = [cell viewWithTag:1];
-            view.frame = cell.bounds;
-        };
     }
     return cell;
 }
@@ -168,10 +119,10 @@
         CollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                        withReuseIdentifier:@"Footer"
                                                                               forIndexPath:indexPath];
-        v.layer.borderColor = UIColor.yellowColor.CGColor;
+        v.layer.borderColor = UIColor.redColor.CGColor;
         v.layer.borderWidth = 2;
         v.label.text = [NSString stringWithFormat:@"Footer %zd",indexPath.section];
-        v.label.textColor = UIColor.yellowColor;
+        v.label.textColor = UIColor.redColor;
         return v;
     }
     else if([kind isEqualToString:UICollectionElementKindSectionHeader]){

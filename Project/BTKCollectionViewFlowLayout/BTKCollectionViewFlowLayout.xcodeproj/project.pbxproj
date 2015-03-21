@@ -18,7 +18,7 @@
 		EAF50AE81AB699920067AEC2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAF50AE71AB699920067AEC2 /* Images.xcassets */; };
 		EAF50AEB1AB699920067AEC2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EAF50AE91AB699920067AEC2 /* LaunchScreen.xib */; };
 		EAF50AF71AB699920067AEC2 /* BTKCollectionViewFlowLayoutTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50AF61AB699920067AEC2 /* BTKCollectionViewFlowLayoutTests.m */; };
-		EAF50B031AB69B2A0067AEC2 /* BTKCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50B021AB69B2A0067AEC2 /* BTKCollectionViewCell.m */; };
+		EAF50B031AB69B2A0067AEC2 /* CollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50B021AB69B2A0067AEC2 /* CollectionViewCell.m */; };
 		EAF50B071AB6A9830067AEC2 /* BTKCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = EAF50B061AB6A9830067AEC2 /* BTKCollectionViewFlowLayout.m */; };
 /* End PBXBuildFile section */
 
@@ -53,8 +53,8 @@
 		EAF50AF01AB699920067AEC2 /* BTKCollectionViewFlowLayoutTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BTKCollectionViewFlowLayoutTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAF50AF51AB699920067AEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EAF50AF61AB699920067AEC2 /* BTKCollectionViewFlowLayoutTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BTKCollectionViewFlowLayoutTests.m; sourceTree = "<group>"; };
-		EAF50B011AB69B2A0067AEC2 /* BTKCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTKCollectionViewCell.h; sourceTree = "<group>"; };
-		EAF50B021AB69B2A0067AEC2 /* BTKCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTKCollectionViewCell.m; sourceTree = "<group>"; };
+		EAF50B011AB69B2A0067AEC2 /* CollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionViewCell.h; sourceTree = "<group>"; };
+		EAF50B021AB69B2A0067AEC2 /* CollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionViewCell.m; sourceTree = "<group>"; };
 		EAF50B041AB6A7280067AEC2 /* BTKCollectionViewDelegateFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BTKCollectionViewDelegateFlowLayout.h; path = ../../../Classes/BTKCollectionViewDelegateFlowLayout.h; sourceTree = "<group>"; };
 		EAF50B051AB6A9830067AEC2 /* BTKCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BTKCollectionViewFlowLayout.h; path = ../../../Classes/BTKCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		EAF50B061AB6A9830067AEC2 /* BTKCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BTKCollectionViewFlowLayout.m; path = ../../../Classes/BTKCollectionViewFlowLayout.m; sourceTree = "<group>"; };
@@ -83,8 +83,8 @@
 			children = (
 				EAF50ADE1AB699920067AEC2 /* AppDelegate.h */,
 				EAF50ADF1AB699920067AEC2 /* AppDelegate.m */,
-				EAF50B011AB69B2A0067AEC2 /* BTKCollectionViewCell.h */,
-				EAF50B021AB69B2A0067AEC2 /* BTKCollectionViewCell.m */,
+				EAF50B011AB69B2A0067AEC2 /* CollectionViewCell.h */,
+				EAF50B021AB69B2A0067AEC2 /* CollectionViewCell.m */,
 				EA992A831ABBC71400AA04B0 /* CommanderView.h */,
 				EA992A841ABBC71400AA04B0 /* CommanderView.m */,
 				EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */,
@@ -270,7 +270,7 @@
 				EAF50B071AB6A9830067AEC2 /* BTKCollectionViewFlowLayout.m in Sources */,
 				EA992A7F1ABBBB8600AA04B0 /* DataSource.m in Sources */,
 				EAF50AE01AB699920067AEC2 /* AppDelegate.m in Sources */,
-				EAF50B031AB69B2A0067AEC2 /* BTKCollectionViewCell.m in Sources */,
+				EAF50B031AB69B2A0067AEC2 /* CollectionViewCell.m in Sources */,
 				EA4471EF1ABE1669007DB43E /* CollectionReusableView.m in Sources */,
 				EA992A851ABBC71400AA04B0 /* CommanderView.m in Sources */,
 				EAF50ADD1AB699920067AEC2 /* main.m in Sources */,
