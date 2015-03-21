@@ -15,6 +15,9 @@
 @property(nonatomic,assign,readonly) CGRect bodyRect;
 @property(nonatomic,assign,readonly) CGRect backgroundRect;
 
+@property(nonatomic,assign,readonly) BOOL hasHeader;
+@property(nonatomic,assign,readonly) BOOL hasFooter;
+
 @end
 
 @implementation BTKCollectionViewFlowLayoutSectionInfo
@@ -45,6 +48,16 @@
 - (NSString*) debugDescription
 {
     return [NSString stringWithFormat:@"header = %@ footer = %@ body = %@ background = %@",NSStringFromCGRect(self.headerRect),NSStringFromCGRect(self.footerRect),NSStringFromCGRect(self.bodyRect),NSStringFromCGRect(self.backgroundRect)];
+}
+
+- (BOOL)hasHeader
+{
+    return self.headerRect.size.width != 0 && self.headerRect.size.height != 0;
+}
+
+- (BOOL)hasFooter
+{
+    return self.footerRect.size.width != 0 && self.footerRect.size.height != 0;
 }
 
 @end
@@ -259,17 +272,27 @@
         // invalidateSupplementaryElementsOfKind is not supported
         return context;
     }
-    NSInteger numOfSections = self.collectionView.numberOfSections;
-    NSMutableArray *indexePaths = NSMutableArray.new;
-    for(NSInteger s = 0 ; s < numOfSections ; s++ ){
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:s];
-        [indexePaths addObject:indexPath];
-    }
     if(self.shouldStickHeaderViews){
+        NSMutableArray *indexePaths = NSMutableArray.new;
+        [self.infos enumerateObjectsUsingBlock:^(BTKCollectionViewFlowLayoutSectionInfo *info, NSUInteger s, BOOL *stop) {
+            if(!info.hasHeader){
+                return;
+            }
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:s];
+            [indexePaths addObject:indexPath];
+        }];
         [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader
                                           atIndexPaths:indexePaths];
     }
     if(self.shouldStickFooterViews){
+        NSMutableArray *indexePaths = NSMutableArray.new;
+        [self.infos enumerateObjectsUsingBlock:^(BTKCollectionViewFlowLayoutSectionInfo *info, NSUInteger s, BOOL *stop) {
+            if(!info.hasFooter){
+                return;
+            }
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:s];
+            [indexePaths addObject:indexPath];
+        }];
         [context invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionFooter
                                           atIndexPaths:indexePaths];
     }
@@ -348,8 +371,12 @@
     
     // Add missing headers only if sticky header is enabled
     if(self.shouldStickHeaderViews){
-        [headerMissingSections enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
+        [headerMissingSections enumerateIndexesUsingBlock:^(NSUInteger s, BOOL *stop) {
+            BTKCollectionViewFlowLayoutSectionInfo *info = self.infos[s];
+            if(!info.hasHeader){
+                return;
+            }
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:s];
             UICollectionViewLayoutAttributes *attr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                           atIndexPath:indexPath];
             if(attr){
@@ -360,8 +387,12 @@
     
     // Add missing footers only if sticky footer is enabled
     if(self.shouldStickFooterViews){
-        [footerMissingSections enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:idx];
+        [footerMissingSections enumerateIndexesUsingBlock:^(NSUInteger s, BOOL *stop) {
+            BTKCollectionViewFlowLayoutSectionInfo *info = self.infos[s];
+            if(!info.hasFooter){
+                return;
+            }
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:s];
             UICollectionViewLayoutAttributes *attr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter
                                                                                           atIndexPath:indexPath];
             if(attr){
