@@ -119,7 +119,7 @@ Footer</string>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" white="0.97105551891393593" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="m44-Bi-GfD" firstAttribute="centerY" secondItem="0wR-rJ-JqZ" secondAttribute="centerY" id="0KA-TE-43C"/>
                 <constraint firstItem="Cne-ZK-DRA" firstAttribute="trailing" secondItem="adm-c0-efV" secondAttribute="trailing" id="1Lz-L3-GJN"/>
