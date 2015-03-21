@@ -8,6 +8,7 @@
 
 #import "DataSource.h"
 #import "BTKCollectionViewCell.h"
+#import "CollectionReusableView.h"
 
 @implementation DataSource
 
@@ -29,16 +30,16 @@
         [collectionView registerClass:[BTKCollectionViewCell class]
                 forCellWithReuseIdentifier:[self reuseIdentifierForType:i]];
     }
-    [collectionView registerClass:[UICollectionReusableView class]
+    [collectionView registerClass:[CollectionReusableView class]
        forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
               withReuseIdentifier:@"Header"];
-    [collectionView registerClass:[UICollectionReusableView class]
+    [collectionView registerClass:[CollectionReusableView class]
        forSupplementaryViewOfKind:UICollectionElementKindSectionFooter
               withReuseIdentifier:@"Footer"];
-    [collectionView registerClass:[UICollectionReusableView class]
+    [collectionView registerClass:[CollectionReusableView class]
        forSupplementaryViewOfKind:self.bodyViewKind
               withReuseIdentifier:@"Body"];
-    [collectionView registerClass:[UICollectionReusableView class]
+    [collectionView registerClass:[CollectionReusableView class]
        forSupplementaryViewOfKind:self.backgroundViewKind
               withReuseIdentifier:@"Background"];
 }
@@ -72,7 +73,7 @@
 - (NSInteger) collectionView:(UICollectionView *)collectionView
       numberOfItemsInSection:(NSInteger)section
 {
-    return 1000;
+    return 20;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
@@ -164,34 +165,49 @@
                                  atIndexPath:(NSIndexPath *)indexPath
 {
     if([kind isEqualToString:UICollectionElementKindSectionFooter]){
-        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                                         withReuseIdentifier:@"Footer"
-                                                                                forIndexPath:indexPath];
-        v.layer.borderColor = [UIColor.yellowColor colorWithAlphaComponent:0.8].CGColor;
-        v.layer.borderWidth = 5;
+        CollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                       withReuseIdentifier:@"Footer"
+                                                                              forIndexPath:indexPath];
+        v.layer.borderColor = UIColor.yellowColor.CGColor;
+        v.layer.borderWidth = 2;
+        v.label.text = [NSString stringWithFormat:@"Footer %zd",indexPath.section];
+        v.label.textColor = UIColor.yellowColor;
         return v;
     }
     else if([kind isEqualToString:UICollectionElementKindSectionHeader]){
-        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                                         withReuseIdentifier:@"Header"
-                                                                                forIndexPath:indexPath];
-        v.layer.borderColor = [UIColor.blueColor colorWithAlphaComponent:0.8].CGColor;
-        v.layer.borderWidth = 5;
+        CollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                       withReuseIdentifier:@"Header"
+                                                                              forIndexPath:indexPath];
+        v.layer.borderColor = UIColor.blueColor.CGColor;
+        v.layer.borderWidth = 2;
+        v.label.text = [NSString stringWithFormat:@"Header %zd",indexPath.section];
+        v.label.textColor = UIColor.blueColor;
         return v;
     }
     else if([kind isEqualToString:self.bodyViewKind]){
-        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                                         withReuseIdentifier:@"Body"
-                                                                                forIndexPath:indexPath];
-        v.layer.borderColor = [UIColor.greenColor colorWithAlphaComponent:0.8].CGColor;
-        v.layer.borderWidth = 5;
+        CollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                       withReuseIdentifier:@"Body"
+                                                                              forIndexPath:indexPath];
+        v.layer.borderColor = UIColor.greenColor.CGColor;
+        v.layer.borderWidth = 2;
+        v.label.text = [NSString stringWithFormat:@"Body %zd",indexPath.section];
+        v.label.textColor = UIColor.greenColor;
+        v.label.textAlignment = NSTextAlignmentCenter;
         return v;
     }
     else if([kind isEqualToString:self.backgroundViewKind]){
-        UICollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                                         withReuseIdentifier:@"Background"
-                                                                                forIndexPath:indexPath];
-        v.layer.backgroundColor = [UIColor.whiteColor colorWithAlphaComponent:0.8].CGColor;
+        CollectionReusableView *v = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                       withReuseIdentifier:@"Background"
+                                                                              forIndexPath:indexPath];
+        if(indexPath.section % 2 == 0){
+            v.layer.backgroundColor = UIColor.lightGrayColor.CGColor;
+        }
+        else{
+            v.layer.backgroundColor = UIColor.grayColor.CGColor;
+        }
+        v.label.text = [NSString stringWithFormat:@"Background %zd",indexPath.section];
+        v.label.textColor = UIColor.whiteColor;
+        v.label.textAlignment = NSTextAlignmentRight;
         return v;
     }
     // should not come here...

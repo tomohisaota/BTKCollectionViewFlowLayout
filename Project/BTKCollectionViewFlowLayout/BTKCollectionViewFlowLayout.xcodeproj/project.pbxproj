@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA4471EF1ABE1669007DB43E /* CollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = EA4471EE1ABE1669007DB43E /* CollectionReusableView.m */; };
 		EA992A7F1ABBBB8600AA04B0 /* DataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EA992A7E1ABBBB8600AA04B0 /* DataSource.m */; };
 		EA992A821ABBC6CB00AA04B0 /* CommanderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */; };
 		EA992A851ABBC71400AA04B0 /* CommanderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EA992A841ABBC71400AA04B0 /* CommanderView.m */; };
@@ -32,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EA4471ED1ABE1669007DB43E /* CollectionReusableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionReusableView.h; sourceTree = "<group>"; };
+		EA4471EE1ABE1669007DB43E /* CollectionReusableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionReusableView.m; sourceTree = "<group>"; };
 		EA992A7D1ABBBB8600AA04B0 /* DataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataSource.h; sourceTree = "<group>"; };
 		EA992A7E1ABBBB8600AA04B0 /* DataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataSource.m; sourceTree = "<group>"; };
 		EA992A811ABBC6CB00AA04B0 /* CommanderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommanderView.xib; sourceTree = "<group>"; };
@@ -92,6 +95,8 @@
 				EAF50AE41AB699920067AEC2 /* Main.storyboard */,
 				EAF50AE11AB699920067AEC2 /* ViewController.h */,
 				EAF50AE21AB699920067AEC2 /* ViewController.m */,
+				EA4471ED1ABE1669007DB43E /* CollectionReusableView.h */,
+				EA4471EE1ABE1669007DB43E /* CollectionReusableView.m */,
 			);
 			name = sample;
 			sourceTree = "<group>";
@@ -266,6 +271,7 @@
 				EA992A7F1ABBBB8600AA04B0 /* DataSource.m in Sources */,
 				EAF50AE01AB699920067AEC2 /* AppDelegate.m in Sources */,
 				EAF50B031AB69B2A0067AEC2 /* BTKCollectionViewCell.m in Sources */,
+				EA4471EF1ABE1669007DB43E /* CollectionReusableView.m in Sources */,
 				EA992A851ABBC71400AA04B0 /* CommanderView.m in Sources */,
 				EAF50ADD1AB699920067AEC2 /* main.m in Sources */,
 			);
