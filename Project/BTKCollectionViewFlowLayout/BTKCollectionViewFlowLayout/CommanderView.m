@@ -17,6 +17,11 @@
 @property (nonatomic,weak,readwrite) IBOutlet UISegmentedControl *hAlignControl;
 @property (nonatomic,weak,readwrite) IBOutlet UISegmentedControl *vAlignControl;
 
+@property (nonatomic,weak,readwrite) IBOutlet UISwitch *hasHeaderControl;
+@property (nonatomic,weak,readwrite) IBOutlet UISwitch *hasBodyControl;
+@property (nonatomic,weak,readwrite) IBOutlet UISwitch *hasFooterControl;
+@property (nonatomic,weak,readwrite) IBOutlet UISwitch *hasBackgroundControl;
+
 @end
 
 @implementation CommanderView
@@ -28,7 +33,7 @@
 }
 
 - (void)awakeFromNib{
-    for(UISwitch *v in @[self.stickyFooterSwicth,self.stickyHeaderSwicth]){
+    for(UISwitch *v in @[self.stickyFooterSwicth,self.stickyHeaderSwicth,self.hasHeaderControl,self.hasBodyControl,self.hasFooterControl,self.hasBackgroundControl]){
         [v addTarget:self
               action:@selector(valueChanged:)
     forControlEvents:UIControlEventValueChanged];
@@ -65,6 +70,46 @@
 - (void)setIsStickyFooter:(BOOL)isStickyFooter
 {
     self.stickyFooterSwicth.on = isStickyFooter;
+}
+
+- (BOOL)hasHeader
+{
+    return self.hasHeaderControl.on;
+}
+
+- (void)setHasHeader:(BOOL)hasHeader
+{
+    self.hasHeaderControl.on = hasHeader;
+}
+
+- (BOOL)hasBody
+{
+    return self.hasBodyControl.on;
+}
+
+- (void)setHasBody:(BOOL)hasBody
+{
+    self.hasBodyControl.on = hasBody;
+}
+
+- (BOOL)hasFooter
+{
+    return self.hasFooterControl.on;
+}
+
+- (void)setHasFooter:(BOOL)hasFooter
+{
+    self.hasFooterControl.on = hasFooter;
+}
+
+- (BOOL)hasBackground
+{
+    return self.hasBackgroundControl.on;
+}
+
+-(void)setHasBackground:(BOOL)hasBackground
+{
+    self.hasBackgroundControl.on = hasBackground;
 }
 
 - (UICollectionViewScrollDirection)scrollDirection

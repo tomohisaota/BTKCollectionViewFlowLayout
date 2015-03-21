@@ -33,13 +33,10 @@
     };
     
     _collectionViewLayout = BTKCollectionViewFlowLayout.new;
-    _collectionViewLayout.collectionElementKindSectionBody = self.dataSource.bodyViewKind;
-    _collectionViewLayout.collectionElementKindSectionBackground = self.dataSource.backgroundViewKind;
     
     //_collectionViewLayout.shouldAlignToPointGrid = NO;
     _collectionView = [UICollectionView.alloc initWithFrame:self.view.bounds
                                        collectionViewLayout:self.collectionViewLayout];
-    _collectionView.contentInset = self.contentInset;
     [self.dataSource prepareCollectionView:self.collectionView];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self.dataSource;
@@ -53,29 +50,16 @@
     self.collectionViewLayout.shouldStickHeaderViews = self.controlView.isStickyHeader;
     self.collectionViewLayout.shouldStickFooterViews = self.controlView.isStickyFooter;
     self.collectionViewLayout.scrollDirection = self.controlView.scrollDirection;
+    self.collectionViewLayout.collectionElementKindSectionBody = self.controlView.hasBody ? self.dataSource.bodyViewKind : nil;
+    self.collectionViewLayout.collectionElementKindSectionBackground = self.controlView.hasBackground ?self.dataSource.backgroundViewKind : nil;
+
     [self.collectionView reloadData];
-}
-
-- (NSString *)contentInsetStr
-{
-    return NSStringFromUIEdgeInsets(self.contentInset);
-}
-
-- (void)setContentInsetStr:(NSString *)contentInsetStr
-{
-    self.contentInset = UIEdgeInsetsFromString(contentInsetStr);
-}
-
-- (void)setContentInset:(UIEdgeInsets)contentInset
-{
-    _contentInset = contentInset;
-    self.collectionView.contentInset = contentInset;
 }
 
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    const CGFloat controlViewHeight = 96;
+    const CGFloat controlViewHeight = 130;
     CGRect b = self.view.bounds;
     self.collectionView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(0, 0, controlViewHeight, 0));
     self.controlView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(CGRectGetHeight(self.collectionView.frame), 0, 0, 0));
@@ -125,14 +109,14 @@ minimumLineSpacingForSectionAtIndex:(NSInteger)section
                    layout:(UICollectionViewLayout *)collectionViewLayout
    referenceSizeForHeaderInSection:(NSInteger)section
 {
-    return CGSizeMake(30, 30);
+    return self.controlView.hasHeader ? CGSizeMake(30, 30) : CGSizeZero;
 }
 
 - (CGSize) collectionView:(UICollectionView *)collectionView
                    layout:(UICollectionViewLayout *)collectionViewLayout
 referenceSizeForFooterInSection:(NSInteger)section
 {
-    return CGSizeMake(30, 30);
+    return self.controlView.hasFooter ? CGSizeMake(30, 30) : CGSizeZero;
 }
 
 #pragma mark BTKCollectionViewDelegateFlowLayout

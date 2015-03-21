@@ -15,6 +15,11 @@
 @property (nonatomic,assign,readwrite) BOOL isStickyHeader;
 @property (nonatomic,assign,readwrite) BOOL isStickyFooter;
 
+@property (nonatomic,assign,readwrite) BOOL hasHeader;
+@property (nonatomic,assign,readwrite) BOOL hasBody;
+@property (nonatomic,assign,readwrite) BOOL hasFooter;
+@property (nonatomic,assign,readwrite) BOOL hasBackground;
+
 @property (nonatomic,assign,readwrite) UICollectionViewScrollDirection scrollDirection;
 @property (nonatomic,assign,readwrite) UIControlContentHorizontalAlignment horizontalAlignment;
 @property (nonatomic,assign,readwrite) UIControlContentVerticalAlignment verticalAlignment;
