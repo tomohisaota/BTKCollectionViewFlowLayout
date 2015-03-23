@@ -10,6 +10,7 @@
 
 @interface CollectionReusableView : UICollectionReusableView
 
+@property(nonatomic,assign,readwrite) BOOL isVertical;
 @property(nonatomic,strong,readonly) UILabel *label;
 
 @end

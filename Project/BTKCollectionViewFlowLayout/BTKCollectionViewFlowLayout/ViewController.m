@@ -54,6 +54,7 @@
     self.collectionViewLayout.collectionElementKindSectionBody = self.controlView.hasBody ? self.dataSource.bodyViewKind : nil;
     self.collectionViewLayout.collectionElementKindSectionBackground = self.controlView.hasBackground ?self.dataSource.backgroundViewKind : nil;
 
+    self.dataSource.isVertical = self.controlView.scrollDirection == UICollectionViewScrollDirectionHorizontal;
     [self.collectionView reloadData];
 }
 

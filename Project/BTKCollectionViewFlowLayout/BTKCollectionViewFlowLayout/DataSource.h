@@ -20,6 +20,7 @@ typedef enum BTKViewControllerCellType : NSUInteger {
 
 @property(nonatomic,strong,readonly) NSString *bodyViewKind;
 @property(nonatomic,strong,readonly) NSString *backgroundViewKind;
+@property(nonatomic,assign,readwrite) BOOL isVertical;
 
 - (void) prepareCollectionView:(UICollectionView*)collectionView;
 - (BTKViewControllerCellType) typeForIndexPath : (NSIndexPath*)indexPath;

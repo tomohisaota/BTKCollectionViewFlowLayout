@@ -25,8 +25,21 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    const CGFloat sideMargin = 5;
-    self.label.frame = CGRectMake(sideMargin, 5, CGRectGetWidth(self.frame) - sideMargin * 2, 15);
+    const CGFloat margin = 5;
+    if(self.isVertical){
+        self.label.transform = CGAffineTransformMakeRotation(- M_PI / 2);
+        self.label.frame = CGRectMake(5, margin , 15 , CGRectGetHeight(self.bounds) - margin * 2);
+    }
+    else{
+        self.label.transform = CGAffineTransformIdentity;
+        self.label.frame = CGRectMake(margin, 5, CGRectGetWidth(self.bounds) - margin * 2, 15);
+    }
+}
+
+- (void)setIsVertical:(BOOL)isVertical
+{
+    _isVertical = isVertical;
+    [self setNeedsLayout];
 }
 
 @end
