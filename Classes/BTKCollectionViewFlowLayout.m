@@ -305,7 +305,7 @@
 {
     // Apple bug workaround
     // http://stackoverflow.com/questions/12927027/uicollectionview-flowlayout-not-wrapping-cells-correctly-ios
-    for (UICollectionViewLayoutAttributes *attr in attrs) {
+    for (UICollectionViewLayoutAttributes *attr in attrs.copy) {
         if (attr.representedElementCategory != UICollectionElementCategoryCell) {
             continue;
         }

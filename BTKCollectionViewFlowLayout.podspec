@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BTKCollectionViewFlowLayout"
-  s.version          = "1.1.2"
+  s.version          = "1.1.3"
   s.summary          = "CollectionViewFlowLayout with additional supplemental views and alignment/sticky option."
   s.description      = <<-DESC
                        CollectionViewFlowLayout with body and background supplemental views.
@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/tomohisaota/BTKCollectionViewFlowLayout.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/toowitter'
 
-  s.ios.deployment_target = '6.0'
+  s.ios.deployment_target = '7.0'
   s.requires_arc = true
 
   s.source_files = 'Classes/**/*.{h,m}'
