@@ -62,8 +62,11 @@
     [super viewDidLayoutSubviews];
     const CGFloat controlViewHeight = 130;
     CGRect b = self.view.bounds;
-    self.collectionView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(0, 0, controlViewHeight, 0));
-    self.controlView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(CGRectGetHeight(self.collectionView.frame), 0, 0, 0));
+    self.collectionView.frame = b;
+    UIEdgeInsets i = self.collectionView.contentInset;
+    i.bottom = controlViewHeight;
+    self.collectionView.contentInset = i;
+    self.controlView.frame = UIEdgeInsetsInsetRect(b, UIEdgeInsetsMake(b.size.height - controlViewHeight, 0, 0, 0));
 }
 
 #pragma mark UICollectionViewDelegateFlowLayout
