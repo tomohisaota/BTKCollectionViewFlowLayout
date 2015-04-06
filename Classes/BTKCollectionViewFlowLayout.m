@@ -238,28 +238,16 @@
 - (BOOL) shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
     BOOL shouldInvalidate = [super shouldInvalidateLayoutForBoundsChange:newBounds];
-    BOOL sizeChanged;
-    if(self.scrollDirection == UICollectionViewScrollDirectionVertical){
-        sizeChanged = CGRectGetWidth(self.collectionView.bounds) != CGRectGetWidth(newBounds);
+    if(shouldInvalidate){
+        return YES;
     }
-    else{
-        sizeChanged = CGRectGetHeight(self.collectionView.bounds) != CGRectGetHeight(newBounds);
-    }
-    if(sizeChanged){
-        [self invalidateLayout];
-    }
-    shouldInvalidate |= sizeChanged;
-    
     if(self.shouldStickHeaderViews || self.shouldStickFooterViews){
-        if(!shouldInvalidate){
-            // Partial Update only if shouldInvalidate is NO
-            // Use Zero rect to create empty invalidation context from super class
-            UICollectionViewLayoutInvalidationContext *context = [self invalidationContextForBoundsChange:CGRectZero];
-            [self invalidateLayoutWithContext:context];
-        }
+        // Partial Update only if shouldInvalidate is NO
+        // Use Zero rect to create empty invalidation context from super class
+        UICollectionViewLayoutInvalidationContext *context = [self invalidationContextForBoundsChange:CGRectZero];
+        [self invalidateLayoutWithContext:context];
     }
-
-    return shouldInvalidate;
+    return NO;
 }
 
 - (UICollectionViewLayoutInvalidationContext *)invalidationContextForBoundsChange:(CGRect)newBounds
